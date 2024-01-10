@@ -11,13 +11,10 @@ use proto_build::{
 };
 
 /// The Cosmos SDK commit or tag to be cloned and used to build the proto files
-const COSMOS_SDK_REV: &str = "v0.47.5-osmo";
-
-/// The osmosis commit or tag to be cloned and used to build the proto files
-const OSMOSIS_REV: &str = "v21.0.0";
+const FINSCHIA_SDK_REV: &str = "v0.48.1";
 
 /// The wasmd commit or tag to be cloned and used to build the proto files
-const WASMD_REV: &str = "v0.45.0-osmo";
+const WASMD_REV: &str = "v0.2.0";
 
 /// The cometbft commit or tag to be cloned and used to build the proto files
 const COMETBFT_REV: &str = "v0.37.2";
@@ -37,11 +34,9 @@ const ICS23_REV: &str = "rust/v0.10.0";
 // working directory.
 
 /// The directory generated cosmos-sdk proto files go into in this repo
-const OUT_DIR: &str = "../osmosis-std/src/types/";
+const OUT_DIR: &str = "../finschia-std/src/types/";
 /// Directory where the cosmos-sdk submodule is located
-const COSMOS_SDK_DIR: &str = "../../dependencies/cosmos-sdk/";
-/// Directory where the osmosis submodule is located
-const OSMOSIS_DIR: &str = "../../dependencies/osmosis/";
+const FINSCHIA_SDK_DIR: &str = "../../dependencies/finschia-sdk/";
 /// Directory where the wasmd submodule is located
 const WASMD_DIR: &str = "../../dependencies/wasmd/";
 /// Directory where the cometbft submodule is located
@@ -57,8 +52,7 @@ const TMP_BUILD_DIR: &str = "/tmp/tmp-protobuf/";
 pub fn generate() {
     let args: Vec<String> = env::args().collect();
     if args.iter().any(|arg| arg == "--update-deps") {
-        git::update_submodule(COSMOS_SDK_DIR, COSMOS_SDK_REV);
-        git::update_submodule(OSMOSIS_DIR, OSMOSIS_REV);
+        git::update_submodule(FINSCHIA_SDK_DIR, FINSCHIA_SDK_REV);
         git::update_submodule(WASMD_DIR, WASMD_REV);
         git::update_submodule(COMETBFT_DIR, COMETBFT_REV);
         git::update_submodule(IBC_GO_DIR, IBC_GO_REV);
@@ -68,12 +62,6 @@ pub fn generate() {
     let tmp_build_dir: PathBuf = TMP_BUILD_DIR.parse().unwrap();
     let out_dir: PathBuf = OUT_DIR.parse().unwrap();
 
-    let osmosis_project = CosmosProject {
-        name: "osmosis".to_string(),
-        version: OSMOSIS_REV.to_string(),
-        project_dir: OSMOSIS_DIR.to_string(),
-        exclude_mods: vec![],
-    };
     let wasmd_project = CosmosProject {
         name: "wasmd".to_string(),
         version: WASMD_REV.to_string(),
@@ -95,10 +83,10 @@ pub fn generate() {
     };
 
     let cosmos_project = CosmosProject {
-        name: "cosmos".to_string(),
-        version: COSMOS_SDK_REV.to_string(),
-        project_dir: COSMOS_SDK_DIR.to_string(),
-        exclude_mods: vec!["reflection".to_string(), "autocli".to_string()],
+        name: "finschia".to_string(),
+        version: FINSCHIA_SDK_REV.to_string(),
+        project_dir: FINSCHIA_SDK_DIR.to_string(),
+        exclude_mods: vec![],
     };
 
     let ics23_project = CosmosProject {
@@ -108,20 +96,14 @@ pub fn generate() {
         exclude_mods: vec![],
     };
 
-    let osmosis_code_generator = CodeGenerator::new(
+    let finschia_code_generator = CodeGenerator::new(
         out_dir,
         tmp_build_dir,
-        osmosis_project,
-        vec![
-            ibc_project,
-            cometbft_project,
-            cosmos_project,
-            wasmd_project,
-            ics23_project,
-        ],
+        cosmos_project,
+        vec![ibc_project, cometbft_project, wasmd_project, ics23_project],
     );
 
-    osmosis_code_generator.generate();
+    finschia_code_generator.generate();
 }
 
 fn main() {
