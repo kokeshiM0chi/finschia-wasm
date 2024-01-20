@@ -1,0 +1,17 @@
+9f16a4df672590787dcc90fbd0d1729419b6beaa7b31201fdb9010760fb924ad  ./examples/target/wasm32-unknown-unknown/release/auth.wasm
+3c0df755ccacf4c55f69c0e131c61c231349cb3944c4d27a7d88870fbbba42fd  ./examples/target/wasm32-unknown-unknown/release/authz.wasm
+a14fdfaad38350fe740942bf5ebdea246c681e9f4108cf5f051a8ff4f5a1f019  ./examples/target/wasm32-unknown-unknown/release/bank.wasm
+8490b728c973c7840a2038cf6538598510d3c28379fd0d2ad317c212f7ec6f4c  ./examples/target/wasm32-unknown-unknown/release/collection.wasm
+ff93453abd4c51a886813193070c4dce2a49f4fc888d8ea4f747af0cc005483b  ./examples/target/wasm32-unknown-unknown/release/crisis.wasm
+0a49f155775a3d41f4d681cc87aeaf49e1ed859fa2e0c4ac01f731c7cef9a293  ./examples/target/wasm32-unknown-unknown/release/distribution.wasm
+6ea6de5b5bf2e6516f81a105bf34b17ce0fa035c6e10fe971916d1bd6fc68daa  ./examples/target/wasm32-unknown-unknown/release/evidence.wasm
+fb3dad7570779263328f9c8655ad75c42275872aeae551113ba835bd7dd3d87e  ./examples/target/wasm32-unknown-unknown/release/feegrant.wasm
+e2222d48daf9b011f60ca59aa9cc49e182969d9817722684d5cb9cef3e450038  ./examples/target/wasm32-unknown-unknown/release/foundation.wasm
+8c82f4feeafcb567476ef460b18ce257b7aba1fe099371a9286e17e1ead19dc0  ./examples/target/wasm32-unknown-unknown/release/gov.wasm
+042cc291605bade4e9f819ed7a6c5841396f0daf45312db29280627664ae49e9  ./examples/target/wasm32-unknown-unknown/release/mint.wasm
+451021060e5f45d53d34321b39233d56cc4836144ea7898efd73d09e1a404278  ./examples/target/wasm32-unknown-unknown/release/params.wasm
+74a4f2b0784bc89b46671c60cc14b46ed901d956310a8c15b47ef3edfb631527  ./examples/target/wasm32-unknown-unknown/release/slashing.wasm
+6f84f190c61d56f20a8d842034b70bd0c5defa33274bb9b2c8774f4ddbf8f394  ./examples/target/wasm32-unknown-unknown/release/staking.wasm
+ded39badb41d361d5d658de298f349148c5d47553d1fe4510fb3ae5e21f74942  ./examples/target/wasm32-unknown-unknown/release/token.wasm
+3e1947021172ba91a40c0cbbcfcde65d7bc63ce0ad1dba61a0edf7c343081fac  ./examples/target/wasm32-unknown-unknown/release/upgrade.wasm
+990ba3d19a9eb0ffc0541a0698a365cd3f58935c6b16125dba3a9d0f327d0f88  ./examples/target/wasm32-unknown-unknown/release/vesting.wasm
