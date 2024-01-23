@@ -52,7 +52,7 @@ test "${expected_key}" = "${key}" ; if [ $? -eq 0 ]; then echo "ok"; else echo "
 test "${expected_val}" = "${value}" ; if [ $? -eq 0 ]; then echo "ok"; else echo "ng"; fi
 
 #*** mint_nft collection contract ***
-# mint_nft
+# mint a nft
 fnsad tx wasm execute link14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sgf2vn8 '{"mint_nft":{"from":"link14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sgf2vn8","to":"link14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sgf2vn8","params":[{"token_type":"10000001","name":"nft1_name1","meta":"nft1_meta1"},{"token_type":"10000001","name":"nft1_name2","meta":"nft1_meta2"}]}}' --from link146asaycmtydq45kxc8evntqfgepagygelel00h --node http://localhost:26658 --home=${chain_dir} --chain-id simd-testing --keyring-backend test --gas 10000000 -b block -o json -y > tmp.json
 
 # confirm a result of `mint_nft`
