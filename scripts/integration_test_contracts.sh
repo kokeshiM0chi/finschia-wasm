@@ -34,8 +34,8 @@ fnsad tx wasm instantiate 1 '{"name":"collection_name","uri":"collection_uri","m
 # confirm a result of `instantiate`
 key=$(cat ./tmp.json | jq '.logs[] | .events[0]' | jq '.attributes[1]' | jq '.key')
 value=$(cat ./tmp.json | jq '.logs[] | .events[0]' | jq '.attributes[1]' | jq '.value')
-expected_key="\"code_id\""
-expected_val="\"1\""
+expected_key='"code_id"'
+expected_val='"1"'
 test "${expected_key}" = "${key}" ; if [ $? -eq 0 ]; then echo "ok"; else echo "ng"; fi
 test "${expected_val}" = "${value}" ; if [ $? -eq 0 ]; then echo "ok"; else echo "ng"; fi
 
