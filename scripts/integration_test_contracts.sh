@@ -82,7 +82,7 @@ fnsad tx wasm execute link14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sg
 # confirm a result of `burn_nft`
 key=$(cat ./tmp.json | jq '.logs[] | .events[0]' | jq '.attributes[0]' | jq '.key')
 value=$(cat ./tmp.json | jq '.logs[] | .events[0]' | jq '.attributes[0]' | jq '.value')
-expected_key="\"_contract_address\""
-expected_val="\"link14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sgf2vn8\""
+expected_key='"_contract_address"'
+expected_val='"link14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sgf2vn8"'
 test "${expected_key}" = "${key}" ; if [ $? -eq 0 ]; then echo "ok"; else echo "ng"; fi
 test "${expected_val}" = "${value}" ; if [ $? -eq 0 ]; then echo "ok"; else echo "ng"; fi
