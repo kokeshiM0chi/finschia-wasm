@@ -13,12 +13,10 @@ GRPC_PORT_HOST="9090"
 # If this error `realpath: command not found` occurs, run the following command.
 # brew install coreutils
 SCRIPT_DIR="$(realpath "$(dirname "$0")")"
-# shellcheck source=./env
-# shellcheck disable=SC1091
 source "$SCRIPT_DIR"/env
 
 TMP_DIR=$(mktemp -d "${TMPDIR:-/tmp}/fnsa.XXXXXXXXX")
-chmod 777 "$TMP_DIR"
+chmod 755 "$TMP_DIR"
 echo "Using temporary dir $TMP_DIR"
 FINSCHIA_LOGFILE="$TMP_DIR/finschia.log"
 
