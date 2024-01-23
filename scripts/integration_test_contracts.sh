@@ -40,7 +40,7 @@ test "${expected_key}" = "${key}" ; if [ $? -eq 0 ]; then echo "ok"; else echo "
 test "${expected_val}" = "${value}" ; if [ $? -eq 0 ]; then echo "ok"; else echo "ng"; fi
 
 #*** issue_nft collection contract ***
-# issue nft
+# issue a nft
 fnsad tx wasm execute link14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sgf2vn8 '{"issue_nft":{"name":"nft1_name","meta":"nft1_meta","owner":"link14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sgf2vn8"}}' --from link146asaycmtydq45kxc8evntqfgepagygelel00h --node http://localhost:26658 --home=${chain_dir} --chain-id simd-testing --keyring-backend test --gas 10000000 -b block -o json -y > tmp.json
 
 # confirm a result of `issue_nft`
