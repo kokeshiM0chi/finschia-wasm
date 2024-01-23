@@ -21,8 +21,8 @@ fnsad tx wasm store ${artifacts_path}/collection.wasm --node http://localhost:26
 # confirm a result of `store`
 key=$(cat ./tmp.json | jq '.logs[] | .events' | jq '.[0]' | jq '.attributes[2]' | jq '.key')
 value=$(cat ./tmp.json | jq '.logs[] | .events' | jq '.[0]' | jq '.attributes[2]' | jq '.value')
-expected_key="\"module\""
-expected_val="\"wasm\""
+expected_key='"module"'
+expected_val='"wasm"'
 
 if [[ "${expected_key}" = "${key}" ]]; then echo "ok"; else echo "ng"; fi
 if [[ "${expected_val}" = "${value}" ]]; then echo "ok"; else echo "ng"; fi
