@@ -1,6 +1,5 @@
 #!/bin/bash -e
 
-# sleep
 # This sleep is the sum of the time when docker is pulled, started,
 # and the height of the node increases to 1 or more.
 sleep 30
@@ -9,10 +8,6 @@ sleep 30
 cur_path=`pwd`
 chain_dir="${cur_path}/finschia/template/.finschia"
 artifacts_path="${cur_path}/../artifacts/"
-
-echo "hogehoge"
-echo ${artifacts_path}
-echo ${chain_dir}
 
 #*** store collection contract ***
 # store contract
