@@ -4,8 +4,6 @@ set -ex
 mode="mainnet"
 
 SCRIPT_DIR="$(realpath "$(dirname "$0")")"
-# shellcheck source=./env
-# shellcheck disable=SC1091
 source "$SCRIPT_DIR"/../env
 
 CHAIN_ID="simd-testing"
@@ -77,5 +75,3 @@ ${FNSAD} gentx validator0 10000000000stake --home=${CHAIN_DIR} --keyring-backend
 ${FNSAD} collect-gentxs --home=${CHAIN_DIR}
 
 ${FNSAD} validate-genesis --home=${CHAIN_DIR}
-
-# ${FNSAD} start --log_level *:debug --rpc.laddr=tcp://0.0.0.0:26657 --p2p.laddr=tcp://0.0.0.0:26656
