@@ -24,8 +24,8 @@ value=$(cat ./tmp.json | jq '.logs[] | .events' | jq '.[0]' | jq '.attributes[2]
 expected_key="\"module\""
 expected_val="\"wasm\""
 
-test "${expected_key}" = "${key}" ; if [ $? -eq 0 ]; then echo "ok"; else echo "ng"; fi
-test "${expected_val}" = "${value}" ; if [ $? -eq 0 ]; then echo "ok"; else echo "ng"; fi
+if [[ "${expected_key}" = "${key}" ]]; then echo "ok"; else echo "ng"; fi
+if [[ "${expected_val}" = "${value}" ]]; then echo "ok"; else echo "ng"; fi
 
 #*** instantiate collection contract ***
 # instantiate contract
