@@ -7,7 +7,7 @@ sleep 30
 
 # send transaction to node
 cur_path=`pwd`
-chain_dir=${cur_path}"/finschia/template/.finschia"
+chain_dir="${cur_path}/finschia/template/.finschia"
 artifacts_path="${cur_path}/../artifacts/"
 
 echo "hogehoge"
