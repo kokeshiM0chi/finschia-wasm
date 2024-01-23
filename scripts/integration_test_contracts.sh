@@ -9,6 +9,12 @@ cur_path=`pwd`
 chain_dir="${cur_path}/finschia/template/.finschia"
 artifacts_path="${cur_path}/../artifacts/"
 
+# This is a function that checks if the result is as expected.
+check_result() {
+    if [[ "${expected_key}" = "${key}" ]]; then echo "ok"; else echo "ng"; fi
+    if [[ "${expected_val}" = "${value}" ]]; then echo "ok"; else echo "ng"; fi
+}
+
 #*** store collection contract ***
 # store contract
 result=$(fnsad tx wasm store ${artifacts_path}/collection.wasm --node http://localhost:26658 --home=${chain_dir} --from link146asaycmtydq45kxc8evntqfgepagygelel00h --chain-id simd-testing --keyring-backend test --gas 10000000 -b block -o json -y)
@@ -19,8 +25,7 @@ value=$(echo "${result}" | jq '.logs[] | .events' | jq '.[0]' | jq '.attributes[
 expected_key='"module"'
 expected_val='"wasm"'
 
-if [[ "${expected_key}" = "${key}" ]]; then echo "ok"; else echo "ng"; fi
-if [[ "${expected_val}" = "${value}" ]]; then echo "ok"; else echo "ng"; fi
+check_result
 
 #*** instantiate collection contract ***
 # instantiate contract
@@ -31,8 +36,8 @@ key=$(echo "${result}" | jq '.logs[] | .events[0]' | jq '.attributes[1]' | jq '.
 value=$(echo "${result}" | jq '.logs[] | .events[0]' | jq '.attributes[1]' | jq '.value')
 expected_key='"code_id"'
 expected_val='"1"'
-test "${expected_key}" = "${key}" ; if [ $? -eq 0 ]; then echo "ok"; else echo "ng"; fi
-test "${expected_val}" = "${value}" ; if [ $? -eq 0 ]; then echo "ok"; else echo "ng"; fi
+
+check_result
 
 #*** issue_nft collection contract ***
 # issue a nft
@@ -43,8 +48,8 @@ key=$(echo "${result}" | jq '.logs[] | .events[0]' | jq '.attributes[0]' | jq '.
 value=$(echo "${result}" | jq '.logs[] | .events[0]' | jq '.attributes[0]' | jq '.value')
 expected_key='"_contract_address"'
 expected_val='"link14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sgf2vn8"'
-test "${expected_key}" = "${key}" ; if [ $? -eq 0 ]; then echo "ok"; else echo "ng"; fi
-test "${expected_val}" = "${value}" ; if [ $? -eq 0 ]; then echo "ok"; else echo "ng"; fi
+
+check_result
 
 #*** mint_nft collection contract ***
 # mint a nft
@@ -55,8 +60,8 @@ key=$(echo "${result}" | jq '.logs[] | .events[0]' | jq '.attributes[0]' | jq '.
 value=$(echo "${result}" | jq '.logs[] | .events[0]' | jq '.attributes[0]' | jq '.value')
 expected_key='"_contract_address"'
 expected_val='"link14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sgf2vn8"'
-test "${expected_key}" = "${key}" ; if [ $? -eq 0 ]; then echo "ok"; else echo "ng"; fi
-test "${expected_val}" = "${value}" ; if [ $? -eq 0 ]; then echo "ok"; else echo "ng"; fi
+
+check_result
 
 #*** send_nft collection contract ***
 # send_nft
@@ -67,8 +72,8 @@ key=$(echo "${result}" | jq '.logs[] | .events[0]' | jq '.attributes[0]' | jq '.
 value=$(echo "${result}" | jq '.logs[] | .events[0]' | jq '.attributes[0]' | jq '.value')
 expected_key='"_contract_address"'
 expected_val='"link14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sgf2vn8"'
-test "${expected_key}" = "${key}" ; if [ $? -eq 0 ]; then echo "ok"; else echo "ng"; fi
-test "${expected_val}" = "${value}" ; if [ $? -eq 0 ]; then echo "ok"; else echo "ng"; fi
+
+check_result
 
 #*** burn_nft collection contract ***
 # burn_nft
@@ -79,5 +84,5 @@ key=$(echo "${result}" | jq '.logs[] | .events[0]' | jq '.attributes[0]' | jq '.
 value=$(echo "${result}" | jq '.logs[] | .events[0]' | jq '.attributes[0]' | jq '.value')
 expected_key='"_contract_address"'
 expected_val='"link14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sgf2vn8"'
-test "${expected_key}" = "${key}" ; if [ $? -eq 0 ]; then echo "ok"; else echo "ng"; fi
-test "${expected_val}" = "${value}" ; if [ $? -eq 0 ]; then echo "ok"; else echo "ng"; fi
+
+check_result
