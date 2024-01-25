@@ -1,9 +1,5 @@
 #!/bin/sh
 
-# This sleep is the sum of the time when docker is pulled, started,
-# and the height of the node increases to 1 or more.
-sleep 30
-
 # send transaction to node
 cur_path=`pwd`
 
