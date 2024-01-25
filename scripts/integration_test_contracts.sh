@@ -1,5 +1,12 @@
 #!/bin/sh
 
+# Wait until the height of the block is greater than or equal to 1.
+h="0"
+until [[ ${h} == '"1"' ]]
+do
+  h=$(fnsad query block 1 --node http://localhost:26658 --chain-id simd-testing --keyring-backend test | jq .block.header.height)
+done
+
 # send transaction to node
 cur_path=`pwd`
 
