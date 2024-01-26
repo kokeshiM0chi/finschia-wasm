@@ -11,7 +11,7 @@ timeout 60 bash -c "until fnsad query block 1 --node ${URL} --chain-id simd-test
 # If the timeout fails, the process will be terminated abnormally.
 exitstatus=$?
 if [[ $exitstatus -ne 0 ]]; then
-    echo "timeout failed"
+    echo "waiting finschia node is timeout"
     exit 1
 fi
 # send transaction to node
