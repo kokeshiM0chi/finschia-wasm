@@ -37,7 +37,7 @@ raw_log=$(echo ${result} | jq .raw_log)
 check_run_info "${raw_log}" "store: "
 
 #*** instantiate collection contract ***
-result=$(fnsad tx wasm instantiate 1 '{"name":"collection_name","uri":"collection_uri","meta":"collection_meta", "owner":"'${CONTRACT_ADDRESS}'"}' --label collection1 --admin link146asaycmtydq45kxc8evntqfgepagygelel00h  --from link146asaycmtydq45kxc8evntqfgepagygelel00h --node ${URL} ${CHAIN_OPTION})
+result=$(fnsad tx wasm instantiate 1 '{"name":"collection_name","uri":"collection_uri","meta":"collection_meta", "owner":"'${CONTRACT_ADDRESS}'"}' --label collection1 --admin ${FROM_ACCOUNT}  --from ${FROM_ACCOUNT} --node ${URL} ${CHAIN_OPTION})
 
 ## confirm a result of `instantiate`
 raw_log=$(echo ${result} | jq .raw_log)
