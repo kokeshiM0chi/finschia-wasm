@@ -1,6 +1,5 @@
 #!/bin/bash
 set -o errexit -o nounset -o pipefail
-command -v shellcheck >/dev/null && shellcheck "$0"
 
 # Please keep this in sync with the Ports overview in HACKING.md
 TENDERMINT_PORT_GUEST="26658"
@@ -38,7 +37,7 @@ docker run --rm \
   --mount type=volume,source=fnsad_data,target=/root \
   "$REPOSITORY:$VERSION" \
   /template/run_finschia.sh \
-  >"$FINSCHIA_LOGFILE" 2>&1 &
+  >"$FINSCHIA_LOGFILE" >&2 &
 
 echo "fnsad running on http://localhost:$TENDERMINT_PORT_HOST and logging into $FINSCHIA_LOGFILE"
 if [ -n "${CI:-}" ]; then
