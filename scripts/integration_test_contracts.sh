@@ -1,22 +1,25 @@
 #!/bin/sh
 
-# Wait until the height of the block is greater than or equal to 1.
-h="0"
-until [[ ${h} == '"1"' ]]
-do
-  h=$(fnsad query block 1 --node http://localhost:26658 --chain-id simd-testing --keyring-backend test | jq .block.header.height)
-done
-
-# send transaction to node
-cur_path=`pwd`
-
-artifacts_path="artifacts"
-
 ## parameters
 CONTRACT_ADDRESS="link14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sgf2vn8"
 FROM_ACCOUNT="link146asaycmtydq45kxc8evntqfgepagygelel00h"
 URL="http://localhost:26658"
 CODE_ID=1
+
+# Wait until the height of the block is greater than or equal to 1.
+timeout 60 bash -c "until fnsad query block 1 --node ${URL} --chain-id simd-testing --keyring-backend test; do sleep 0.5 done"
+
+# If the timeout fails, the process will be terminated abnormally.
+exitstatus=$?
+if [[ $exitstatus -ne 0 ]]; then
+    echo "timeout failed"
+    exit 1
+fi
+
+# send transaction to node
+cur_path=`pwd`
+
+artifacts_path="artifacts"
 
 # This is a function that checks if the result is as expected.
 check_result() {
