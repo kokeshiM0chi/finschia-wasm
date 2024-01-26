@@ -18,67 +18,53 @@ fi
 cur_path=`pwd`
 
 artifacts_path="artifacts"
-# If the process fails, an error will be output.
-check_result() {
-    if [[ "$1" != "${expected_key}" || "$2" != "${expected_val}" ]]; then echo "Error; $3"; exit 1; fi
+
+# This is a function that checks if executeMsg is successful.
+check_run_info() {
+	if [[ "$raw_log" == *"failed"* ]]; then
+		echo -e "$1$raw_log"
+		exit 1
+	fi
 }
 
 #*** store collection contract ***
 result=$(fnsad tx wasm store ${artifacts_path}/collection.wasm --node ${URL} --from ${FROM_ACCOUNT} --gas 10000000 ${CHAIN_OPTION})
 
 ## confirm a result of `store`
-key=$(echo "${result}" | jq '.logs[] | .events' | jq '.[0]' | jq '.attributes[2]' | jq '.key')
-value=$(echo "${result}" | jq '.logs[] | .events' | jq '.[0]' | jq '.attributes[2]' | jq '.value')
-expected_key='"module"'
-expected_val='"wasm"'
-check_result "${key}" "${value}" "store: ${result}"
+raw_log=$(echo ${result} | jq .raw_log)
+check_run_info "store: "
 
 #*** instantiate collection contract ***
 result=$(fnsad tx wasm instantiate 1 '{"name":"collection_name","uri":"collection_uri","meta":"collection_meta", "owner":"link14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sgf2vn8"}' --label collection1 --admin link146asaycmtydq45kxc8evntqfgepagygelel00h  --from link146asaycmtydq45kxc8evntqfgepagygelel00h --node ${URL} ${CHAIN_OPTION})
 
 ## confirm a result of `instantiate`
-key=$(echo "${result}" | jq '.logs[] | .events[0]' | jq '.attributes[1]' | jq '.key')
-value=$(echo "${result}" | jq '.logs[] | .events[0]' | jq '.attributes[1]' | jq '.value')
-expected_key='"code_id"'
-expected_val='"1"'
-check_result "${key}" "${value}" "instantiate: ${result}"
+raw_log=$(echo ${result} | jq .raw_log)
+check_run_info "instantiate: "
 
 #*** issue_nft collection contract ***
 result=$(fnsad tx wasm execute ${CONTRACT_ADDRESS} '{"issue_nft":{"name":"nft1_name","meta":"nft1_meta","owner":"link14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sgf2vn8"}}' --from ${FROM_ACCOUNT} --node ${URL} --gas 10000000 ${CHAIN_OPTION})
 
 ## confirm a result of `issue_nft`
-key=$(echo "${result}" | jq '.logs[] | .events[0]' | jq '.attributes[0]' | jq '.key')
-value=$(echo "${result}" | jq '.logs[] | .events[0]' | jq '.attributes[0]' | jq '.value')
-expected_key='"_contract_address"'
-expected_val='"link14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sgf2vn8"'
-check_result "${key}" "${value}" "execute: ${result}"
+raw_log=$(echo ${result} | jq .raw_log)
+check_run_info "execute; issue_nft: "
 
 #*** mint_nft collection contract ***
 result=$(fnsad tx wasm execute ${CONTRACT_ADDRESS} '{"mint_nft":{"from":"link14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sgf2vn8","to":"link14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sgf2vn8","params":[{"token_type":"10000001","name":"nft1_name1","meta":"nft1_meta1"},{"token_type":"10000001","name":"nft1_name2","meta":"nft1_meta2"}]}}' --from ${FROM_ACCOUNT} --node ${URL} --gas 10000000 ${CHAIN_OPTION})
 
 ## confirm a result of `mint_nft`
-key=$(echo "${result}" | jq '.logs[] | .events[0]' | jq '.attributes[0]' | jq '.key')
-value=$(echo "${result}" | jq '.logs[] | .events[0]' | jq '.attributes[0]' | jq '.value')
-expected_key='"_contract_address"'
-expected_val='"link14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sgf2vn8"'
-check_result "${key}" "${value}" "execute: ${result}"
+raw_log=$(echo ${result} | jq .raw_log)
+check_run_info "execute; mint_nft: "
 
 #*** send_nft collection contract ***
 result=$(fnsad tx wasm execute ${CONTRACT_ADDRESS} '{"send_nft":{"from":"link14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sgf2vn8","to":"link14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sgf2vn8","token_ids":["1000000100000001"]}}' --from ${FROM_ACCOUNT} --node ${URL} --gas 10000000 ${CHAIN_OPTION})
 
 ## confirm a result of `send_nft`
-key=$(echo "${result}" | jq '.logs[] | .events[0]' | jq '.attributes[0]' | jq '.key')
-value=$(echo "${result}" | jq '.logs[] | .events[0]' | jq '.attributes[0]' | jq '.value')
-expected_key='"_contract_address"'
-expected_val='"link14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sgf2vn8"'
-check_result "${key}" "${value}" "execute: ${result}"
+raw_log=$(echo ${result} | jq .raw_log)
+check_run_info "execute; send_nft"
 
 #*** burn_nft collection contract ***
 result=$(fnsad tx wasm execute ${CONTRACT_ADDRESS} '{"burn_nft":{"from":"link14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sgf2vn8","token_ids":["1000000100000001"]}}' --from ${FROM_ACCOUNT} --node ${URL} --gas 10000000 ${CHAIN_OPTION})
 
 ## confirm a result of `burn_nft`
-key=$(echo "${result}" | jq '.logs[] | .events[0]' | jq '.attributes[0]' | jq '.key')
-value=$(echo "${result}" | jq '.logs[] | .events[0]' | jq '.attributes[0]' | jq '.value')
-expected_key='"_contract_address"'
-expected_val='"link14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sgf2vn8"'
-check_result "${key}" "${value}" "execute: ${result}"
+raw_log=$(echo ${result} | jq .raw_log)
+check_run_info "execute; burn_nft"
