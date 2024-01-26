@@ -39,7 +39,7 @@ docker run --rm \
   /template/run_finschia.sh \
   >"$FINSCHIA_LOGFILE" 2>&1 &
 
-echo "fnsad running on http://localhost:$TENDERMINT_PORT_HOST and logging into $FINSCHIA_LOGFILE"
+echo "fnsad running on http://localhost:$TENDERMINT_PORT_HOST and logging into $FINSCHIA_LOGFILE" >&2
 if [ -n "${CI:-}" ]; then
   # Give process some time to come alive. No idea why this helps. Needed for CI.
   sleep 0.5
