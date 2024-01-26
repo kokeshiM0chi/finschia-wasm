@@ -18,7 +18,7 @@ fi
 cur_path=`pwd`
 
 artifacts_path="artifacts"
-# This is a function that checks if the result is as expected.
+# If the process fails, an error will be output.
 check_result() {
     if [[ "$1" != "${expected_key}" || "$2" != "${expected_val}" ]]; then echo "Error: $3"; exit 1; fi
 }
