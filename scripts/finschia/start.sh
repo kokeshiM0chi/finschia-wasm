@@ -15,7 +15,7 @@ SCRIPT_DIR="$(realpath "$(dirname "$0")")"
 source "$SCRIPT_DIR"/env
 TMP_DIR=$(mktemp -d "${TMPDIR:-/tmp}/fnsa.XXXXXXXXX")
 chmod 755 "$TMP_DIR"
-echo "Using temporary dir $TMP_DIR"
+echo "Using temporary dir $TMP_DIR" >&2
 FINSCHIA_LOGFILE="$TMP_DIR/finschia.log"
 
 # Use a fresh volume for every start
