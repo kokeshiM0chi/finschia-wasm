@@ -37,7 +37,7 @@ docker run --rm \
   --mount type=volume,source=fnsad_data,target=/root \
   "$REPOSITORY:$VERSION" \
   /template/run_finschia.sh \
-  >"$FINSCHIA_LOGFILE" >&2 &
+  >"$FINSCHIA_LOGFILE" 2>&1 &
 
 echo "fnsad running on http://localhost:$TENDERMINT_PORT_HOST and logging into $FINSCHIA_LOGFILE"
 if [ -n "${CI:-}" ]; then
