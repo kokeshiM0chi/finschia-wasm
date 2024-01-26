@@ -20,7 +20,7 @@ cur_path=`pwd`
 artifacts_path="artifacts"
 # This is a function that checks if the result is as expected.
 check_result() {
-    if [[ "$1" != "${expected_key}" || "$2" != "${expected_val}" ]]; then echo "err with $3"; exit 1; fi
+    if [[ "$1" != "${expected_key}" || "$2" != "${expected_val}" ]]; then echo "Error: $3"; exit 1; fi
 }
 
 #*** store collection contract ***
@@ -31,7 +31,7 @@ key=$(echo "${result}" | jq '.logs[] | .events' | jq '.[0]' | jq '.attributes[2]
 value=$(echo "${result}" | jq '.logs[] | .events' | jq '.[0]' | jq '.attributes[2]' | jq '.value')
 expected_key='"module"'
 expected_val='"wasm"'
-check_result "${key}" "${value}" "expected"
+check_result "${key}" "${value}" "${result}"
 
 #*** instantiate collection contract ***
 result=$(fnsad tx wasm instantiate 1 '{"name":"collection_name","uri":"collection_uri","meta":"collection_meta", "owner":"link14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sgf2vn8"}' --label collection1 --admin link146asaycmtydq45kxc8evntqfgepagygelel00h  --from link146asaycmtydq45kxc8evntqfgepagygelel00h --node ${URL} ${CHAIN_OPTION})
@@ -41,7 +41,7 @@ key=$(echo "${result}" | jq '.logs[] | .events[0]' | jq '.attributes[1]' | jq '.
 value=$(echo "${result}" | jq '.logs[] | .events[0]' | jq '.attributes[1]' | jq '.value')
 expected_key='"code_id"'
 expected_val='"1"'
-check_result "${key}" "${value}" "expected"
+check_result "${key}" "${value}" "${result}"
 
 #*** issue_nft collection contract ***
 result=$(fnsad tx wasm execute ${CONTRACT_ADDRESS} '{"issue_nft":{"name":"nft1_name","meta":"nft1_meta","owner":"link14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sgf2vn8"}}' --from ${FROM_ACCOUNT} --node ${URL} --gas 10000000 ${CHAIN_OPTION})
@@ -51,7 +51,7 @@ key=$(echo "${result}" | jq '.logs[] | .events[0]' | jq '.attributes[0]' | jq '.
 value=$(echo "${result}" | jq '.logs[] | .events[0]' | jq '.attributes[0]' | jq '.value')
 expected_key='"_contract_address"'
 expected_val='"link14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sgf2vn8"'
-check_result "${key}" "${value}" "expected"
+check_result "${key}" "${value}" "${result}"
 
 #*** mint_nft collection contract ***
 result=$(fnsad tx wasm execute ${CONTRACT_ADDRESS} '{"mint_nft":{"from":"link14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sgf2vn8","to":"link14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sgf2vn8","params":[{"token_type":"10000001","name":"nft1_name1","meta":"nft1_meta1"},{"token_type":"10000001","name":"nft1_name2","meta":"nft1_meta2"}]}}' --from ${FROM_ACCOUNT} --node ${URL} --gas 10000000 ${CHAIN_OPTION})
@@ -61,7 +61,7 @@ key=$(echo "${result}" | jq '.logs[] | .events[0]' | jq '.attributes[0]' | jq '.
 value=$(echo "${result}" | jq '.logs[] | .events[0]' | jq '.attributes[0]' | jq '.value')
 expected_key='"_contract_address"'
 expected_val='"link14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sgf2vn8"'
-check_result "${key}" "${value}" "expected"
+check_result "${key}" "${value}" "${result}"
 
 #*** send_nft collection contract ***
 result=$(fnsad tx wasm execute ${CONTRACT_ADDRESS} '{"send_nft":{"from":"link14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sgf2vn8","to":"link14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sgf2vn8","token_ids":["1000000100000001"]}}' --from ${FROM_ACCOUNT} --node ${URL} --gas 10000000 ${CHAIN_OPTION})
@@ -71,7 +71,7 @@ key=$(echo "${result}" | jq '.logs[] | .events[0]' | jq '.attributes[0]' | jq '.
 value=$(echo "${result}" | jq '.logs[] | .events[0]' | jq '.attributes[0]' | jq '.value')
 expected_key='"_contract_address"'
 expected_val='"link14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sgf2vn8"'
-check_result "${key}" "${value}" "expected"
+check_result "${key}" "${value}" "${result}"
 
 #*** burn_nft collection contract ***
 result=$(fnsad tx wasm execute ${CONTRACT_ADDRESS} '{"burn_nft":{"from":"link14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sgf2vn8","token_ids":["1000000100000001"]}}' --from ${FROM_ACCOUNT} --node ${URL} --gas 10000000 ${CHAIN_OPTION})
@@ -81,4 +81,4 @@ key=$(echo "${result}" | jq '.logs[] | .events[0]' | jq '.attributes[0]' | jq '.
 value=$(echo "${result}" | jq '.logs[] | .events[0]' | jq '.attributes[0]' | jq '.value')
 expected_key='"_contract_address"'
 expected_val='"link14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sgf2vn8"'
-check_result "${key}" "${value}" "expected"
+check_result "${key}" "${value}" "${result}"
