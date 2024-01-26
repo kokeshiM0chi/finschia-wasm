@@ -37,35 +37,35 @@ raw_log=$(echo ${result} | jq .raw_log)
 check_run_info "${raw_log}" "store: "
 
 #*** instantiate collection contract ***
-result=$(fnsad tx wasm instantiate 1 '{"name":"collection_name","uri":"collection_uri","meta":"collection_meta", "owner":"link14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sgf2vn8"}' --label collection1 --admin link146asaycmtydq45kxc8evntqfgepagygelel00h  --from link146asaycmtydq45kxc8evntqfgepagygelel00h --node ${URL} ${CHAIN_OPTION})
+result=$(fnsad tx wasm instantiate 1 '{"name":"collection_name","uri":"collection_uri","meta":"collection_meta", "owner":"'${CONTRACT_ADDRESS}'"}' --label collection1 --admin link146asaycmtydq45kxc8evntqfgepagygelel00h  --from link146asaycmtydq45kxc8evntqfgepagygelel00h --node ${URL} ${CHAIN_OPTION})
 
 ## confirm a result of `instantiate`
 raw_log=$(echo ${result} | jq .raw_log)
 check_run_info "${raw_log}" "instantiate: "
 
 #*** issue_nft collection contract ***
-result=$(fnsad tx wasm execute ${CONTRACT_ADDRESS} '{"issue_nft":{"name":"nft1_name","meta":"nft1_meta","owner":"link14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sgf2vn8"}}' --from ${FROM_ACCOUNT} --node ${URL} --gas 10000000 ${CHAIN_OPTION})
+result=$(fnsad tx wasm execute ${CONTRACT_ADDRESS} '{"issue_nft":{"name":"nft1_name","meta":"nft1_meta","owner":"'${CONTRACT_ADDRESS}'"}}' --from ${FROM_ACCOUNT} --node ${URL} --gas 10000000 ${CHAIN_OPTION})
 
 ## confirm a result of `issue_nft`
 raw_log=$(echo ${result} | jq .raw_log)
 check_run_info "${raw_log}" "execute; issue_nft: "
 
 #*** mint_nft collection contract ***
-result=$(fnsad tx wasm execute ${CONTRACT_ADDRESS} '{"mint_nft":{"from":"link14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sgf2vn8","to":"link14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sgf2vn8","params":[{"token_type":"10000001","name":"nft1_name1","meta":"nft1_meta1"},{"token_type":"10000001","name":"nft1_name2","meta":"nft1_meta2"}]}}' --from ${FROM_ACCOUNT} --node ${URL} --gas 10000000 ${CHAIN_OPTION})
+result=$(fnsad tx wasm execute ${CONTRACT_ADDRESS} '{"mint_nft":{"from":"'${CONTRACT_ADDRESS}'","to":"'${CONTRACT_ADDRESS}'","params":[{"token_type":"10000001","name":"nft1_name1","meta":"nft1_meta1"},{"token_type":"10000001","name":"nft1_name2","meta":"nft1_meta2"}]}}' --from ${FROM_ACCOUNT} --node ${URL} --gas 10000000 ${CHAIN_OPTION})
 
 ## confirm a result of `mint_nft`
 raw_log=$(echo ${result} | jq .raw_log)
 check_run_info "${raw_log}" "execute; mint_nft: "
 
 #*** send_nft collection contract ***
-result=$(fnsad tx wasm execute ${CONTRACT_ADDRESS} '{"send_nft":{"from":"link14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sgf2vn8","to":"link14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sgf2vn8","token_ids":["1000000100000001"]}}' --from ${FROM_ACCOUNT} --node ${URL} --gas 10000000 ${CHAIN_OPTION})
+result=$(fnsad tx wasm execute ${CONTRACT_ADDRESS} '{"send_nft":{"from":"'${CONTRACT_ADDRESS}'","to":"'${CONTRACT_ADDRESS}'","token_ids":["1000000100000001"]}}' --from ${FROM_ACCOUNT} --node ${URL} --gas 10000000 ${CHAIN_OPTION})
 
 ## confirm a result of `send_nft`
 raw_log=$(echo ${result} | jq .raw_log)
 check_run_info "${raw_log}" "execute; send_nft"
 
 #*** burn_nft collection contract ***
-result=$(fnsad tx wasm execute ${CONTRACT_ADDRESS} '{"burn_nft":{"from":"link14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sgf2vn8","token_ids":["1000000100000001"]}}' --from ${FROM_ACCOUNT} --node ${URL} --gas 10000000 ${CHAIN_OPTION})
+result=$(fnsad tx wasm execute ${CONTRACT_ADDRESS} '{"burn_nft":{"from":"'${CONTRACT_ADDRESS}'","token_ids":["1000000100000001"]}}' --from ${FROM_ACCOUNT} --node ${URL} --gas 10000000 ${CHAIN_OPTION})
 
 ## confirm a result of `burn_nft`
 raw_log=$(echo ${result} | jq .raw_log)
