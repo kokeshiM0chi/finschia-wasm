@@ -62,7 +62,13 @@ jobs:
 
       - name: buf setup
         if: env.NEW_TAG
-        uses: bufbuild/buf-setup-action@v2
+        uses: bufbuild/buf-setup-action@v1
+
+      - name: Install protoc
+        if: env.NEW_TAG
+        uses: arduino/setup-protoc@v1
+        with:
+          version: "3.14.0"
 
       - name: Install buf
         run: |
