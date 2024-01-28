@@ -61,6 +61,10 @@ jobs:
           cargo run
         working-directory: packages/proto-build
 
+      - name: init submodule
+        if: env.NEW_TAG
+        run: git submodule update --init --remote
+
       - name: set each submodule version to env file in finschia-wasm
         if: env.NEW_TAG
         run: |
