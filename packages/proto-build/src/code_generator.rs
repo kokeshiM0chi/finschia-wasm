@@ -157,6 +157,8 @@ impl CodeGenerator {
                         .arg(proto_path.join(project.name.clone()).join(excluded_mod));
                 }
             }
+            //
+            println!("cmd:               {:?}",   cmd);
 
             let exit_status = cmd.spawn().unwrap().wait().unwrap();
 
