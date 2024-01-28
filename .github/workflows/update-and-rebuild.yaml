@@ -74,6 +74,10 @@ jobs:
         run: |
           GO111MODULE=on go install github.com/bufbuild/buf/cmd/buf@v1.15.1
 
+      - name: use actions cache
+        if: env.NEW_TAG
+        uses: ./.github/actions/cache
+
       - name: generate packages/finschia-std
         if: env.NEW_TAG
         run: |
