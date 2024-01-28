@@ -23,6 +23,7 @@ jobs:
 
       - name: Check new tag released
         run: |
+          echo "####env.NEW_TAG:${NEW_TAG}"
           NEW_TAG=$(curl "https://api.github.com/repos/Finschia/finschia/tags" | jq -r '.[0].name')
           if [ ${{ env.CURRENT_TAG }} != $NEW_TAG ] && \
           [ "$(git branch -r | grep "auto-bump-up/${NEW_TAG}")" == "" ]; then \
@@ -55,12 +56,15 @@ jobs:
         run: git submodule update --init --remote
 
       - name: rust setup
+        if: env.NEW_TAG
         run: rustup component add rustfmt
 
       - name: buf setup
+        if: env.NEW_TAG
         uses: bufbuild/buf-setup-action@v1
 
       - name: generate packages/finschia-std
+        if: env.NEW_TAG
         run: |
           cargo run
         working-directory: packages/proto-build
