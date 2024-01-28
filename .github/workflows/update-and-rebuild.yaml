@@ -50,6 +50,10 @@ jobs:
         with:
           repository: kokeshiM0chi/finschia-wasm
 
+      - name: init submodule
+        if: env.NEW_TAG
+        run: git submodule update --init --remote
+
       - name: rust setup
         run: rustup component add rustfmt
 
@@ -60,10 +64,6 @@ jobs:
         run: |
           cargo run
         working-directory: packages/proto-build
-
-      - name: init submodule
-        if: env.NEW_TAG
-        run: git submodule update --init --remote
 
       - name: set each submodule version to env file in finschia-wasm
         if: env.NEW_TAG
