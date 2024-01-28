@@ -77,7 +77,8 @@ jobs:
       - name: generate packages/finschia-std
         if: env.NEW_TAG
         run: |
-          cd packages/proto-build && cargo run
+          cargo run
+        working-directory: packages/proto-build
 
       - name: set each submodule version to env file in finschia-wasm
         if: env.NEW_TAG
