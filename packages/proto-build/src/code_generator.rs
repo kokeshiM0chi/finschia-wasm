@@ -125,7 +125,8 @@ impl CodeGenerator {
         // Compile proto files for each file in `protos` variable
         // `buf generate —template {<buf_gen_template} <proto_file>`
         for project in all_related_projects {
-            let buf_root = if project.name == "cosmos" || project.name == "ics23" {
+            println!("project.name: {:?}", &project.name);
+            let buf_root = if project.name == "finschia" || project.name == "ics23" || project.name == "tendermint" {
                 self.root.join(&project.project_dir).join("proto")
             } else {
                 WalkDir::new(&self.root.join(&project.project_dir))
@@ -158,6 +159,7 @@ impl CodeGenerator {
                 }
             }
             //
+            println!("project_dir: {:?}", &project.project_dir);
             println!("cmd:               {:?}",   cmd);
 
             let exit_status = cmd.spawn().unwrap().wait().unwrap();
