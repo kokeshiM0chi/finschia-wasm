@@ -53,8 +53,10 @@ jobs:
       - name: rust setup
         run: rustup component add rustfmt
 
-      - name: generate packages/finschia-std
+      - name: buf setup
         uses: bufbuild/buf-setup-action@v1
+
+      - name: generate packages/finschia-std
         run: |
           cargo run
         working-directory: packages/proto-build
