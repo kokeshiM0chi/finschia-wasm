@@ -53,7 +53,8 @@ jobs:
 
       - name: init submodule
         if: env.NEW_TAG
-        run: git submodule update --init --remote
+        run: git submodule update --init
+        working-directory: packages/proto-build
 
       - name: rust setup
         if: env.NEW_TAG
