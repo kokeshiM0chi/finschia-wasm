@@ -54,6 +54,7 @@ jobs:
         run: rustup component add rustfmt
 
       - name: generate packages/finschia-std
+      - uses: bufbuild/buf-setup-action@v1
         run: |
           cargo run
         working-directory: packages/proto-build
