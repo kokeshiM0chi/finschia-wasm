@@ -41,3 +41,9 @@ pub fn update_submodule(dir: &str, rev: &str) {
 
     // run_git(["submodule", "update", "--init"]).expect("failed to update submodules");
 }
+
+pub fn checkout_submodule(dir: &str, rev: &str) {
+    let full_path   = |p: &str| PathBuf::from(env!("CARGO_MANIFEST_DIR")).join(p);
+    let mut cmd_git = process::Command::new("git");
+    cmd_git.arg("-C").arg(full_path(dir)).arg("checkout").arg(rev).status().expect("error");
+}

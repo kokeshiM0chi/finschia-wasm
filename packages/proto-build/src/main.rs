@@ -49,13 +49,11 @@ pub fn generate(version_tags: &HashMap<String, String>) {
         .get("ICS23_VERSION")
         .expect("ICS23_VERSION is not set");
 
-    if args.iter().any(|arg| arg == "--update-deps") {
-        git::update_submodule(FINSCHIA_SDK_DIR, &finschia_sdk_version);
-        git::update_submodule(WASMD_DIR, &wasmd_version);
-        git::update_submodule(COMETBFT_DIR, &tendermint_version);
-        git::update_submodule(IBC_GO_DIR, &ibc_go_version);
-        git::update_submodule(ICS23_DIR, &ics23_version);
-    }
+    git::checkout_submodule(FINSCHIA_SDK_DIR, &finschia_sdk_version);
+    git::checkout_submodule(WASMD_DIR, &wasmd_version);
+    git::checkout_submodule(COMETBFT_DIR, &tendermint_version);
+    git::checkout_submodule(IBC_GO_DIR, &ibc_go_version);
+    git::checkout_submodule(ICS23_DIR, &ics23_version);
 
     let tmp_build_dir: PathBuf = TMP_BUILD_DIR.parse().unwrap();
     let out_dir: PathBuf = OUT_DIR.parse().unwrap();
@@ -105,7 +103,8 @@ pub fn generate(version_tags: &HashMap<String, String>) {
 }
 
 fn main() {
-    let iter = dotenvy::from_filename_iter("env").expect("The env file in which tag is defined was not found.");
+    let iter = dotenvy::from_filename_iter("env")
+        .expect("The env file in which tag is defined was not found.");
     let mut version_tags: HashMap<String, String> = HashMap::new();
 
     for item in iter {
