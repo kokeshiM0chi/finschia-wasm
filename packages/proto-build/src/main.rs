@@ -5,30 +5,12 @@
 
 use std::{env, path::PathBuf};
 
+use dotenvy;
 use proto_build::{
     code_generator::{CodeGenerator, CosmosProject},
     git,
 };
-
-/// The Cosmos SDK commit or tag to be cloned and used to build the proto files
-const FINSCHIA_SDK_REV: &str = "v0.48.1";
-
-/// The wasmd commit or tag to be cloned and used to build the proto files
-const WASMD_REV: &str = "v0.2.0";
-
-/// The cometbft commit or tag to be cloned and used to build the proto files
-const COMETBFT_REV: &str = "v0.37.2";
-
-/// The ibc-go commit or tag to be cloned and used to build the proto files
-const IBC_GO_REV: &str = "v7.3.1";
-
-/// The ics23 commit or tag to be cloned and used to build the proto files
-///
-/// cosmos-sdk deps for `osmo/v0.47` is `v0.9.0` but that has no buf.yml,
-/// so we are using this version instead which will work but
-/// [prehash_key_before_comparison](https://github.com/cosmos/ics23/commit/cea74ba58ffbf87154701cd5959184acedf09cd6#diff-fe43695465b668ae6b79cc97ff2103fbb665f8440c42bc4f85a1942380a3fae4)
-/// will be missing
-const ICS23_REV: &str = "rust/v0.10.0";
+use std::collections::HashMap;
 
 // All paths must end with a / and either be absolute or include a ./ to reference the current
 // working directory.
@@ -49,14 +31,30 @@ const ICS23_DIR: &str = "../../dependencies/ics23/";
 /// A temporary directory for proto building
 const TMP_BUILD_DIR: &str = "/tmp/tmp-protobuf/";
 
-pub fn generate() {
+pub fn generate(version_tags: &HashMap<String, String>) {
     let args: Vec<String> = env::args().collect();
+    let finschia_sdk_version = version_tags
+        .get("FINSCHIA_SDK_VERSION")
+        .expect("FINSCHIA_SDK_VERSION is not set");
+    let wasmd_version = version_tags
+        .get("WASMD_VERSION")
+        .expect("WASMD_VERSION is not set");
+    let tendermint_version = version_tags
+        .get("TENDERMINT_VERSION")
+        .expect("TENDERMINT_VERSION is not set");
+    let ibc_go_version = version_tags
+        .get("IBC_GO_VERSION")
+        .expect("IBC_GO_VERSION is not set");
+    let ics23_version = version_tags
+        .get("ICS23_VERSION")
+        .expect("ICS23_VERSION is not set");
+
     if args.iter().any(|arg| arg == "--update-deps") {
-        git::update_submodule(FINSCHIA_SDK_DIR, FINSCHIA_SDK_REV);
-        git::update_submodule(WASMD_DIR, WASMD_REV);
-        git::update_submodule(COMETBFT_DIR, COMETBFT_REV);
-        git::update_submodule(IBC_GO_DIR, IBC_GO_REV);
-        git::update_submodule(ICS23_DIR, ICS23_REV);
+        git::update_submodule(FINSCHIA_SDK_DIR, &finschia_sdk_version);
+        git::update_submodule(WASMD_DIR, &wasmd_version);
+        git::update_submodule(COMETBFT_DIR, &tendermint_version);
+        git::update_submodule(IBC_GO_DIR, &ibc_go_version);
+        git::update_submodule(ICS23_DIR, &ics23_version);
     }
 
     let tmp_build_dir: PathBuf = TMP_BUILD_DIR.parse().unwrap();
@@ -64,34 +62,34 @@ pub fn generate() {
 
     let wasmd_project = CosmosProject {
         name: "wasmd".to_string(),
-        version: WASMD_REV.to_string(),
+        version: wasmd_version.to_string(),
         project_dir: WASMD_DIR.to_string(),
         exclude_mods: vec![],
     };
     let cometbft_project = CosmosProject {
         name: "tendermint".to_string(),
-        version: COMETBFT_REV.to_string(),
+        version: tendermint_version.to_string(),
         project_dir: COMETBFT_DIR.to_string(),
         exclude_mods: vec![],
     };
 
     let ibc_project = CosmosProject {
         name: "ibc".to_string(),
-        version: IBC_GO_REV.to_string(),
+        version: ibc_go_version.to_string(),
         project_dir: IBC_GO_DIR.to_string(),
         exclude_mods: vec![],
     };
 
     let cosmos_project = CosmosProject {
         name: "finschia".to_string(),
-        version: FINSCHIA_SDK_REV.to_string(),
+        version: finschia_sdk_version.to_string(),
         project_dir: FINSCHIA_SDK_DIR.to_string(),
         exclude_mods: vec![],
     };
 
     let ics23_project = CosmosProject {
         name: "ics23".to_string(),
-        version: ICS23_REV.to_string(),
+        version: ics23_version.to_string(),
         project_dir: ICS23_DIR.to_string(),
         exclude_mods: vec![],
     };
@@ -107,6 +105,14 @@ pub fn generate() {
 }
 
 fn main() {
+    let iter = dotenvy::from_filename_iter("env").expect("The env file in which tag is defined was not found.");
+    let mut version_tags: HashMap<String, String> = HashMap::new();
+
+    for item in iter {
+        let (key, val) = item.unwrap();
+        version_tags.insert(key, val);
+    }
+
     pretty_env_logger::init();
-    generate();
+    generate(&version_tags);
 }

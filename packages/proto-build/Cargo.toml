@@ -21,3 +21,4 @@ syn = {version = "1.0.98", features = ["full", "parsing", "extra-traits"]}
 tonic = "0.7"
 tonic-build = "0.7"
 walkdir = "2"
+dotenvy = "0.15.7"
