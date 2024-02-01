@@ -7,7 +7,8 @@ URL='http://localhost:26658'
 CHAIN_OPTION='--chain-id simd-testing --keyring-backend test -b block -o json -y'
 
 ## Wait until the height of the block is greater than or equal to 1.
-timeout 60 bash -c "until fnsad query block 1 --node ${URL} --chain-id simd-testing > /dev/null; do sleep 0.5; done"
+timeout 60 bash -c 'until [[ $(curl -s "http://localhost:26658/status?" | jq -r ".result.sync_info.latest_block_height // 0") -ge 1 ]]; do sleep 0.5; done'
+
 # If the timeout fails, the process will be terminated abnormally.
 exitstatus=$?
 if [[ $exitstatus -ne 0 ]]; then
@@ -37,7 +38,8 @@ raw_log=$(echo ${result} | jq .raw_log)
 check_run_info "${raw_log}" "store: "
 
 #*** instantiate collection contract ***
-result=$(fnsad tx wasm instantiate 1 '{"name":"collection_name","uri":"collection_uri","meta":"collection_meta", "owner":"'${CONTRACT_ADDRESS}'"}' --label collection1 --admin ${FROM_ACCOUNT}  --from ${FROM_ACCOUNT} --node ${URL} ${CHAIN_OPTION})
+CODE_ID=$(echo "${result}" | jq '.logs[] | select(.msg_index == 0) | .events[] | select(.type == "store_code") | .attributes[] | select(.key == "code_id") | .value | tonumber')
+result=$(fnsad tx wasm instantiate ${CODE_ID} '{"name":"collection_name","uri":"collection_uri","meta":"collection_meta", "owner":"'${CONTRACT_ADDRESS}'"}' --label collection1 --admin ${FROM_ACCOUNT}  --from ${FROM_ACCOUNT} --node ${URL} ${CHAIN_OPTION})
 
 ## confirm a result of `instantiate`
 raw_log=$(echo ${result} | jq .raw_log)

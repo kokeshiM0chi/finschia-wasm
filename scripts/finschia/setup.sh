@@ -4,48 +4,26 @@ set -ex
 mode="mainnet"
 
 SCRIPT_DIR="$(realpath "$(dirname "$0")")"
-source "$SCRIPT_DIR"/../env
+source "$SCRIPT_DIR"/env
 
 CHAIN_ID="simd-testing"
 MONIKER="simd-testing"
-CONFIG_DIR=${SCRIPT_DIR}/.finschia
-if [[ -z "${CHAIN_DIR}" ]]
-then
-  CHAIN_DIR=${CONFIG_DIR}
+if [[ -z $1 ]]; then
+  echo "CONFIG_DIR does not exists"
+  exit 1
+else
+  CONFIG_DIR=$1"/.finschia"
 fi
 
-if [[ $1 == "docker" ]]
-then
-    if [[ $2 == "testnet" ]]
-    then
-        mode="testnet"
-    fi
-    FNSAD="docker run -i --rm -p 26656:26656 -p 26657:26657 -v $CONFIG_DIR:/root/.finschia --platform=linux/amd64 $REPOSITORY:$VERSION fnsad"
-    CHAIN_DIR="/root/.finschia"
-elif [[ $1 == "testnet" ]]
-then
-    mode="testnet"
-fi
+CHAIN_DIR=${CONFIG_DIR}
 
 FNSAD=${FNSAD:-fnsad}
-
 # initialize
 rm -rf $CONFIG_DIR
 
 # Initialize configuration files and genesis file
 # moniker is the name of your node
 ${FNSAD} init simd-testing --chain-id=$CHAIN_ID --home=${CHAIN_DIR}
-
-# configure for testnet
-if [[ ${mode} == "testnet" ]]
-then
-    if [[ $1 == "docker" ]]
-    then
-        docker run -i -p 26656:26656 -p 26657:26657 -v ${HOME}/.finschia:/root/.finschia $REPOSITORY:$VERSION sh -c "export FNSAD_TESTNET=true"
-    else
-       export FNSAD_TESTNET=true
-    fi
-fi
 
 # Please do not use the TEST_MNEMONIC for production purpose
 TEST_MNEMONIC="mind flame tobacco sense move hammer drift crime ring globe art gaze cinnamon helmet cruise special produce notable negative wait path scrap recall have"
