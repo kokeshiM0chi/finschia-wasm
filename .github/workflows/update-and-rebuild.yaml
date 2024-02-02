@@ -55,7 +55,9 @@ jobs:
 
       - name: fetch and merge submodule
         if: env.NEW_TAG
-        run: git submodule update --remote
+        run: |
+          git submodule update --remote
+          git submodule status
         working-directory: packages/proto-build
 
       - name: rust setup
