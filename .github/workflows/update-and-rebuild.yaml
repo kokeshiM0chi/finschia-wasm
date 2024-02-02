@@ -1,4 +1,4 @@
-name: Auto upgrade finchia-std
+name: Auto upgrade finchia-std test
 
 on:
   workflow_dispatch:
