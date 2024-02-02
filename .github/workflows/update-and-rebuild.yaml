@@ -56,7 +56,7 @@ jobs:
       - name: fetch and merge submodule
         if: env.NEW_TAG
         run: |
-          git submodule update --remote
+          git submodule update --init --remote
           git submodule status
 #        working-directory: finschia-wasm
 
@@ -95,8 +95,8 @@ jobs:
       - name: Generate new packages/finschia-std
         if: env.NEW_TAG
         run: |
-          cd packages/proto-build && cargo run
-#        working-directory: finschia-wasm/packages/proto-build
+          cargo run
+        working-directory: packages/proto-build
 
       - name: Create Pull Request
         if: env.NEW_TAG
