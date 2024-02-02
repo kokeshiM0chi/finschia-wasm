@@ -44,6 +44,7 @@ jobs:
           echo "###FOO_BAR_BAZ:"${{ env.FOO_BAR_BAZ }}
           echo "FINSCHIA_SDK_VERSION=$FINSCHIA_SDK_VERSION" >> $GITHUB_ENV
           echo "WASMD_VERSION=$WASMD_VERSION" >> $GITHUB_ENV
+          echo "TENDERMINT_VERSION=$TENDERMINT_VERSION" >> $GITHUB_ENV
           echo "IBC_GO_VERSION=$IBC_GO_VERSION" >> $GITHUB_ENV
 
       - name: Check out to finschia-wasm
