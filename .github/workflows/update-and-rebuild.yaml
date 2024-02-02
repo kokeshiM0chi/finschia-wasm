@@ -58,7 +58,7 @@ jobs:
         run: |
           git submodule update --remote
           git submodule status
-        working-directory: packages/proto-build
+        working-directory: finschia-wasm
 
       - name: rust setup
         if: env.NEW_TAG
@@ -96,7 +96,7 @@ jobs:
         if: env.NEW_TAG
         run: |
           cargo run
-        working-directory: packages/proto-build
+        working-directory: finschia-wasm/packages/proto-build
 
       - name: Create Pull Request
         if: env.NEW_TAG
