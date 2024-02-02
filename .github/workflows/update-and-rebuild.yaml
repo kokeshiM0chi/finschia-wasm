@@ -2,6 +2,9 @@ name: Auto upgrade finchia-std
 
 on:
   workflow_dispatch:
+  schedule:
+    # Every day
+    - cron: "0 1 * * *"
 
 jobs:
   create-bump-up-PR:
