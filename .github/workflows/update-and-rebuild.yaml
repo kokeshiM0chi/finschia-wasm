@@ -51,9 +51,9 @@ jobs:
         with:
           repository: kokeshiM0chi/finschia-wasm
 
-      - name: init submodule
+      - name: fetch and merge submodule
         if: env.NEW_TAG
-        run: git submodule update --init
+        run: git submodule update --remote
         working-directory: packages/proto-build
 
       - name: rust setup
@@ -78,12 +78,6 @@ jobs:
         if: env.NEW_TAG
         uses: ./.github/actions/cache
 
-      - name: generate packages/finschia-std
-        if: env.NEW_TAG
-        run: |
-          cargo run
-        working-directory: packages/proto-build
-
       - name: set each submodule version to env file in finschia-wasm
         if: env.NEW_TAG
         run: |
@@ -92,6 +86,12 @@ jobs:
           echo FINSCHIA_SDK_VERSION=${{ env.FINSCHIA_SDK_VERSION }} | cat >> env
           echo WASMD_VERSION=${{ env.WASMD_VERSION }} | cat >> env
           echo IBC_GO_VERSION=${{ env.IBC_GO_VERSION }} | cat >> env
+
+      - name: Generate new packages/finschia-std
+        if: env.NEW_TAG
+        run: |
+          cargo run
+        working-directory: packages/proto-build
 
       - name: Create Pull Request
         if: env.NEW_TAG
