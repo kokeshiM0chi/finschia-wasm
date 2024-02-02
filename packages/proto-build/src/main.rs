@@ -3,7 +3,7 @@
 //! uses that to build the required proto files for further compilation.
 //! This is based on the proto-compiler code in github.com/informalsystems/ibc-rs
 
-use std::{env, path::PathBuf};
+use std::path::PathBuf;
 
 use dotenvy;
 use proto_build::{
@@ -32,7 +32,6 @@ const ICS23_DIR: &str = "../../dependencies/ics23/";
 const TMP_BUILD_DIR: &str = "/tmp/tmp-protobuf/";
 
 pub fn generate(version_tags: &HashMap<String, String>) {
-    let args: Vec<String> = env::args().collect();
     let finschia_sdk_version = version_tags
         .get("FINSCHIA_SDK_VERSION")
         .expect("FINSCHIA_SDK_VERSION is not set");
@@ -45,17 +44,14 @@ pub fn generate(version_tags: &HashMap<String, String>) {
     let ibc_go_version = version_tags
         .get("IBC_GO_VERSION")
         .expect("IBC_GO_VERSION is not set");
-    let ics23_version = version_tags
-        .get("ICS23_VERSION")
-        .expect("ICS23_VERSION is not set");
 
-    if args.iter().any(|arg| arg == "--update-deps") {
-        git::update_submodule(FINSCHIA_SDK_DIR, &finschia_sdk_version);
-        git::update_submodule(WASMD_DIR, &wasmd_version);
-        git::update_submodule(COMETBFT_DIR, &tendermint_version);
-        git::update_submodule(IBC_GO_DIR, &ibc_go_version);
-        git::update_submodule(ICS23_DIR, &ics23_version);
-    }
+    // cosmos/ics23 have not supported yet in Finschia. So it is fixed tag as like osmosis.
+    let ics23_version = "rust/v0.10.0";
+    git::checkout_submodule(FINSCHIA_SDK_DIR, &finschia_sdk_version);
+    git::checkout_submodule(WASMD_DIR, &wasmd_version);
+    git::checkout_submodule(COMETBFT_DIR, &tendermint_version);
+    git::checkout_submodule(IBC_GO_DIR, &ibc_go_version);
+    git::checkout_submodule(ICS23_DIR, &ics23_version);
 
     let tmp_build_dir: PathBuf = TMP_BUILD_DIR.parse().unwrap();
     let out_dir: PathBuf = OUT_DIR.parse().unwrap();
@@ -105,7 +101,8 @@ pub fn generate(version_tags: &HashMap<String, String>) {
 }
 
 fn main() {
-    let iter = dotenvy::from_filename_iter("env").expect("The env file in which tag is defined was not found.");
+    let iter = dotenvy::from_filename_iter("env")
+        .expect("The env file in which tag is defined was not found.");
     let mut version_tags: HashMap<String, String> = HashMap::new();
 
     for item in iter {
