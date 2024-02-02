@@ -125,6 +125,7 @@ impl CodeGenerator {
         // Compile proto files for each file in `protos` variable
         // `buf generate —template {<buf_gen_template} <proto_file>`
         for project in all_related_projects {
+            println!("##### project.name={:?}", project.name);
             let buf_root = if project.name == "finschia"
                 || project.name == "ics23"
                 || project.name == "tendermint"
