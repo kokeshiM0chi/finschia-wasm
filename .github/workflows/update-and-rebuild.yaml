@@ -58,7 +58,7 @@ jobs:
         run: |
           git submodule update --remote
           git submodule status
-        working-directory: finschia-wasm
+#        working-directory: finschia-wasm
 
       - name: rust setup
         if: env.NEW_TAG
