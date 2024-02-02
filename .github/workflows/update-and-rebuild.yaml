@@ -95,8 +95,8 @@ jobs:
       - name: Generate new packages/finschia-std
         if: env.NEW_TAG
         run: |
-          cargo run
-        working-directory: finschia-wasm/packages/proto-build
+          cd packages/proto-build && cargo run
+#        working-directory: finschia-wasm/packages/proto-build
 
       - name: Create Pull Request
         if: env.NEW_TAG
