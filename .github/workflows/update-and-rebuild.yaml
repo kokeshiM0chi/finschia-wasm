@@ -40,6 +40,7 @@ jobs:
           echo "####WASMD_VERSION:${WASMD_VERSION}"
           IBC_GO_VERSION=$(grep 'github.com/cosmos/ibc-go' go.mod | grep -v '=>' | awk '{print $2}' | awk -F '-' '{if ($3 != "") {print $3} else  if ($2 != "") {print $1"-"$2} else {print $1}}')
           echo "####IBC_GO_VERSION:${IBC_GO_VERSION}"
+          TENDERMINT_VERSION=$(grep 'github.com/tendermint/tendermint' go.mod | grep -v '=>' | awk '{print $2}' | awk -F '-' '{if ($3 != "") {print $3} else  if ($2 != "") {print $1"-"$2} else {print $1}}')
           echo "###FOO_BAR_BAZ:"${{ env.FOO_BAR_BAZ }}
           echo "FINSCHIA_SDK_VERSION=$FINSCHIA_SDK_VERSION" >> $GITHUB_ENV
           echo "WASMD_VERSION=$WASMD_VERSION" >> $GITHUB_ENV
@@ -85,6 +86,7 @@ jobs:
           echo FINSCHIA_VERSION=${{ env.NEW_TAG }} | cat >> env
           echo FINSCHIA_SDK_VERSION=${{ env.FINSCHIA_SDK_VERSION }} | cat >> env
           echo WASMD_VERSION=${{ env.WASMD_VERSION }} | cat >> env
+          echo TENDERMINT_VERSION=${{ env.TENDERMINT_VERSION }} | cat >> env
           echo IBC_GO_VERSION=${{ env.IBC_GO_VERSION }} | cat >> env
 
       - name: Generate new packages/finschia-std
