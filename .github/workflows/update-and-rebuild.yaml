@@ -44,7 +44,7 @@ jobs:
         if: env.NEW_TAG
         uses: actions/checkout@v3
         with:
-          repository: finschia/finschia-wasm
+          repository: kokeshiM0chi/finschia-wasm
 
       - name: fetch and merge submodule
         if: env.NEW_TAG
