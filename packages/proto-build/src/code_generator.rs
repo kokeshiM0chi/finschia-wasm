@@ -129,6 +129,7 @@ impl CodeGenerator {
             let buf_root = if project.name == "finschia"
                 || project.name == "ics23"
                 || project.name == "tendermint"
+                || project.name == "ibc"
             {
                 self.root.join(&project.project_dir).join("proto")
             } else {
