@@ -45,9 +45,10 @@ pub fn generate(version_tags: &HashMap<String, String>) {
     let ibc_go_version = version_tags
         .get("IBC_GO_VERSION")
         .expect("IBC_GO_VERSION is not set");
-    let ics23_version = version_tags
-        .get("ICS23_VERSION")
-        .expect("ICS23_VERSION is not set");
+    // let ics23_version = version_tags
+    //     .get("ICS23_VERSION")
+    //     .expect("ICS23_VERSION is not set");
+    let ics23_version= "rust/v0.10.0";
 
     git::checkout_submodule(FINSCHIA_SDK_DIR, &finschia_sdk_version);
     git::checkout_submodule(WASMD_DIR, &wasmd_version);
