@@ -1,0 +1,26 @@
+name: lint
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  clippy-and-fmt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - uses: ./.github/actions/cache
+      - run: rustup component add rustfmt
+      - name: fmt
+        run: |
+          cargo fmt --all -- --check
+      - name: clippy
+        # Check by `clippy` even if the previous step fails
+        if: success() || failure()
+        run: |
+          # `finschia-std` is excluded because of https://github.com/Finschia/finschia-wasm/issues/39
+          cargo clippy --workspace --exclude finschia-std --all-targets --all-features -- -D warnings
