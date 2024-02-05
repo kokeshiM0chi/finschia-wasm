@@ -22,6 +22,11 @@ jobs:
         with:
           submodules: recursive
       - uses: ./.github/actions/cache
+      - name: build contract
+          docker run --rm -v "$(pwd)":/code \
+          --mount type=volume,source="$(basename "$(pwd)")_cache",target=/code/examples/target \
+          --mount type=volume,source=registry_cache,target=/usr/local/cargo/registry \
+          cosmwasm/rust-optimizer:0.12.13 ./examples
       - name: contracts test
         run: |
           cd scripts && ./start_integration_test_contracts.sh
