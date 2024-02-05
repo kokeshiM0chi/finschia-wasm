@@ -1,14 +1,12 @@
 [package]
-name          = "collection"
-description   = "Example collection to use finschia-wasm"
-authors       = [
-  "dudong2 <leesj9476lsj@gmail.com>",
-]
-version       = { workspace = true }
-edition       = { workspace = true }
-license       = { workspace = true }
-repository    = { workspace = true }
-homepage      = { workspace = true }
+name = "collection"
+description = "Example collection to use finschia-wasm"
+authors = ["dudong2 <leesj9476lsj@gmail.com>"]
+version = { workspace = true }
+edition = { workspace = true }
+license = { workspace = true }
+repository = { workspace = true }
+homepage = { workspace = true }
 documentation = { workspace = true }
 
 [lib]
@@ -21,13 +19,11 @@ backtraces = ["cosmwasm-std/backtraces"]
 library = []
 
 [dependencies]
-cosmwasm-schema  = { workspace = true }
-cosmwasm-std     = { workspace = true }
-cosmwasm-storage = { workspace = true }
-cw-storage-plus  = { workspace = true }
-cw2              = { workspace = true }
-finschia-std     = { workspace = true }
-schemars         = { workspace = true }
-serde            = { workspace = true }
-thiserror        = { workspace = true }
-
+cosmwasm-schema = { workspace = true }
+cosmwasm-std = { workspace = true }
+cw-storage-plus = { workspace = true }
+cw2 = { workspace = true }
+finschia-std = { workspace = true }
+schemars = { workspace = true }
+serde = { workspace = true }
+thiserror = { workspace = true }
