@@ -1,0 +1,27 @@
+name: test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - uses: ./.github/actions/cache
+      - name: test
+        run: |
+            cargo test --all
+
+  test2:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - uses: ./.github/actions/cache
+      - name: contracts test
+        run: |
+          cd scripts && ./start_integration_test_contracts.sh
