@@ -1,4 +1,4 @@
-use cosmwasm_std::{from_json, to_json_binary};
+use cosmwasm_std::{from_binary, to_binary};
 use finschia_std_derive::CosmwasmExt;
 use prost::Message;
 
@@ -43,8 +43,8 @@ fn test_additional_fields_does_not_break_but_cause_lossy_json_deserialization() 
     };
 
     // to_binary() and from_binary() is using `serde_json_wasm` under the hood.
-    let serialized = to_json_binary(&response.params.unwrap()).unwrap();
-    let deserialized: Params = from_json(&serialized).unwrap();
+    let serialized = to_binary(&response.params.unwrap()).unwrap();
+    let deserialized: Params = from_binary(&serialized).unwrap();
 
     // lossy deserialization
     assert_eq!(
