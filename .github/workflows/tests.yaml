@@ -23,6 +23,7 @@ jobs:
           submodules: recursive
       - uses: ./.github/actions/cache
       - name: build contract
+        run: |
           docker run --rm -v "$(pwd)":/code \
           --mount type=volume,source="$(basename "$(pwd)")_cache",target=/code/examples/target \
           --mount type=volume,source=registry_cache,target=/usr/local/cargo/registry \
