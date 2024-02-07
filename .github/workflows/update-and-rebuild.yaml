@@ -7,9 +7,8 @@ on:
     - cron: "0 1 * * *"
 
 jobs:
-  create-bump-up-PR:
+  check-new-finschia-tag:
     runs-on: ubuntu-latest
-
     steps:
       - name: Set current tag to env
         run: |
@@ -31,9 +30,14 @@ jobs:
             git checkout $NEW_TAG
           fi
 
+  create-bump-up-PR:
+    runs-on: ubuntu-latest
+    needs: check-new-finschia-tag
+    steps:
       - name: get each submodule version from go.mod in finschia
         if: env.NEW_TAG
         run: |
+          echo "###"${env.NEW_TAG}
           FINSCHIA_SDK_VERSION=$(grep 'github.com/Finschia/finschia-sdk' go.mod | awk '{print $2}' | awk -F '-' '{if ($3 != "") {print $3} else  if ($2 != "") {print $1"-"$2} else {print $1}}')
           WASMD_VERSION=$(grep 'github.com/Finschia/wasmd' go.mod | awk '{print $2}' | awk -F '-' '{if ($3 != "") {print $3} else  if ($2 != "") {print $1"-"$2} else {print $1}}')
           IBC_GO_VERSION=$(grep 'github.com/cosmos/ibc-go' go.mod | grep -v '=>' | awk '{print $2}' | awk -F '-' '{if ($3 != "") {print $3} else  if ($2 != "") {print $1"-"$2} else {print $1}}')
@@ -47,7 +51,7 @@ jobs:
         if: env.NEW_TAG
         uses: actions/checkout@v3
         with:
-          repository: finschia/finschia-wasm
+          repository: kokeshiM0chi/finschia-wasm
 
       - name: fetch and merge submodule
         if: env.NEW_TAG
