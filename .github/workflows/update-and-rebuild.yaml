@@ -57,8 +57,8 @@ jobs:
     steps:
       - name: debugggg
         run: |
-          echo "debugdayooo"${{needs.check.outputs.NEW_TAG}}
-          echo "debugdayooo"${{needs.check.outputs.FINSCHIA_SDK_VERSION}}
+          echo "debugdayooo"${{needs.check-new-finschia-tag.outputs.NEW_TAG}}
+          echo "debugdayooo"${{needs.check-new-finschia-tag.outputs.FINSCHIA_SDK_VERSION}}
       - name: Check out to finschia-wasm
         if: env.NEW_TAG
         uses: actions/checkout@v3
