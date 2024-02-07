@@ -53,14 +53,14 @@ jobs:
 
   create-bump-up-PR:
     runs-on: ubuntu-latest
-    env:
-      NEW_TAG: ${{ steps.get_versions.outputs.NEW_TAG }}
-      FINSCHIA_SDK_VERSION: ${{ steps.get_versions.outputs.FINSCHIA_SDK_VERSION }}
-      WASMD_VERSION: ${{ steps.get_versions.outputs.WASMD_VERSION }}
-      IBC_GO_VERSION: ${{ steps.get_versions.outputs.IBC_GO_VERSION }}
-      TENDERMINT_VERSION: ${{ steps.get_versions.outputs.TENDERMINT_VERSION }}
-
     needs: check-new-finschia-tag
+    env:
+      NEW_TAG: ${{ needs.check-new-finschia-tag.outputs.NEW_TAG }}
+      FINSCHIA_SDK_VERSION: ${{ needs.check-new-finschia-tag.outputs.FINSCHIA_SDK_VERSION }}
+      WASMD_VERSION: ${{ needs.check-new-finschia-tag.outputs.WASMD_VERSION }}
+      IBC_GO_VERSION: ${{ needs.check-new-finschia-tag.outputs.IBC_GO_VERSION }}
+      TENDERMINT_VERSION: ${{ needs.check-new-finschia-tag.outputs.TENDERMINT_VERSION }}
+
     steps:
       - name: debugggg
         run: |
