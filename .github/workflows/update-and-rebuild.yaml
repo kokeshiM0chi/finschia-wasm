@@ -55,10 +55,19 @@ jobs:
     runs-on: ubuntu-latest
     needs: check-new-finschia-tag
     steps:
+      - env:
+        NEW_TAG: ${{ steps.get_versions.outputs.NEW_TAG }}
+        FINSCHIA_SDK_VERSION: ${{ steps.get_versions.outputs.FINSCHIA_SDK_VERSION }}
+        WASMD_VERSION: ${{ steps.get_versions.outputs.WASMD_VERSION }}
+        IBC_GO_VERSION: ${{ steps.get_versions.outputs.IBC_GO_VERSION }}
+        TENDERMINT_VERSION: ${{ steps.get_versions.outputs.TENDERMINT_VERSION }}
+
       - name: debugggg
         run: |
+          echo "NEW_TAG=$NEW_TAG" >> $GITHUB_ENV;
           echo "debugdayooo"${{needs.check-new-finschia-tag.outputs.NEW_TAG}}
           echo "debugdayooo"${{needs.check-new-finschia-tag.outputs.FINSCHIA_SDK_VERSION}}
+          echo "debug; define env:"$TENDERMINT_VERSION
       - name: Check out to finschia-wasm
         if: env.NEW_TAG
         uses: actions/checkout@v3
