@@ -22,7 +22,7 @@ jobs:
           echo "CURRENT_TAG=$CURRENT_TAG" >> $GITHUB_ENV
 
       - name: Check out to finschia
-        uses: actions/checkout@master
+        uses: actions/checkout@v3
         with:
           repository: Finschia/finschia
           fetch-depth: 0
@@ -129,4 +129,4 @@ jobs:
           branch: auto-bump-up/${{ env.NEW_TAG }}
           labels: automated pr
           title: bump up finschia ${{ env.NEW_TAG }} into main
-          base: main
+          base: auto-build-and-create-bumpup-pr-review
