@@ -52,8 +52,8 @@ jobs:
           echo "IBC_GO_VERSION=$IBC_GO_VERSION" >> $GITHUB_OUTPUT
 
   create-bump-up-PR:
+    needs: needs.check-new-finschia-tag.outputs.NEW_TAG
     runs-on: ubuntu-latest
-    needs: check-new-finschia-tag
     env:
       NEW_TAG: ${{ needs.check-new-finschia-tag.outputs.NEW_TAG }}
       FINSCHIA_SDK_VERSION: ${{ needs.check-new-finschia-tag.outputs.FINSCHIA_SDK_VERSION }}
@@ -70,27 +70,22 @@ jobs:
           echo "debug; define env:"$TENDERMINT_VERSION
 
       - name: Check out to finschia-wasm
-        if: env.NEW_TAG
         uses: actions/checkout@v3
         with:
           repository: kokeshiM0chi/finschia-wasm
 
       - name: fetch and merge submodule
-        if: env.NEW_TAG
         run: |
           git submodule update --init --remote
           git submodule status
 
       - name: rust setup
-        if: env.NEW_TAG
         run: rustup component add rustfmt
 
       - name: buf setup
-        if: env.NEW_TAG
         uses: bufbuild/buf-setup-action@v1
 
       - name: Install protoc
-        if: env.NEW_TAG
         uses: arduino/setup-protoc@v1
         with:
           version: "3.14.0"
@@ -100,11 +95,9 @@ jobs:
           GO111MODULE=on go install github.com/bufbuild/buf/cmd/buf@v1.15.1
 
       - name: use actions cache
-        if: env.NEW_TAG
         uses: ./.github/actions/cache
 
       - name: set each submodule version to env file in finschia-wasm
-        if: env.NEW_TAG
         run: |
           echo '# Choose from https://github.com/Finschia/finschia/releases' | cat > env
           echo FINSCHIA_VERSION=${{ env.NEW_TAG }} | cat >> env
@@ -114,13 +107,11 @@ jobs:
           echo IBC_GO_VERSION=${{ env.IBC_GO_VERSION }} | cat >> env
 
       - name: Generate new packages/finschia-std
-        if: env.NEW_TAG
         run: |
           cargo run
         working-directory: packages/proto-build
 
       - name: Create Pull Request
-        if: env.NEW_TAG
         uses: peter-evans/create-pull-request@v4
         with:
           commit-message: Automated bump up ${{ env.NEW_TAG }}
