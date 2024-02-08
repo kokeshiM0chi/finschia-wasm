@@ -52,7 +52,8 @@ jobs:
           echo "IBC_GO_VERSION=$IBC_GO_VERSION" >> $GITHUB_OUTPUT
 
   create-bump-up-PR:
-    needs: needs.check-new-finschia-tag.outputs.NEW_TAG
+    needs: check-new-finschia-tag
+    if: needs.check-new-finschia-tag.outputs.NEW_TAG
     runs-on: ubuntu-latest
     env:
       NEW_TAG: ${{ needs.check-new-finschia-tag.outputs.NEW_TAG }}
