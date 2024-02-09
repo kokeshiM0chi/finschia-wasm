@@ -1,60 +1,116 @@
-name: update and rebuild
+name: Auto upgrade finchia-std
+
 on:
   workflow_dispatch:
-    name: update and rebuild
-    inputs:
-      osmosis_rev:
-        description: "osmosis revision"
-        required: true
-        type: string
-
-  workflow_call:
-    inputs:
-      osmosis_rev:
-        required: true
-        type: string
-
-env:
-  CARGO_TERM_COLORS: always
+  schedule:
+    # Every day
+    - cron: "0 1 * * *"
 
 jobs:
-  build:
+  check-new-finschia-tag:
     runs-on: ubuntu-latest
+    outputs:
+      NEW_TAG: ${{ env.NEW_TAG }}
+      FINSCHIA_SDK_VERSION: ${{ steps.get_versions.outputs.FINSCHIA_SDK_VERSION }}
+      WASMD_VERSION: ${{ steps.get_versions.outputs.WASMD_VERSION }}
+      IBC_GO_VERSION: ${{ steps.get_versions.outputs.IBC_GO_VERSION }}
+      TENDERMINT_VERSION: ${{ steps.get_versions.outputs.TENDERMINT_VERSION }}
     steps:
-      - name: Setup Go
-        uses: actions/setup-go@v3
+      - name: Set current tag to env
+        run: |
+          CURRENT_TAG=$(curl  "https://api.github.com/repos/Finschia/finschia-proto/tags" | jq -r '.[0].name')
+          echo "CURRENT_TAG=$CURRENT_TAG" >> $GITHUB_ENV
+
+      - name: Check out to finschia
+        uses: actions/checkout@v4
         with:
-          go-version: ">=1.19.0"
+          repository: Finschia/finschia
+          fetch-depth: 0
+
+      - name: Check new tag released
+        run: |
+          NEW_TAG=$(curl "https://api.github.com/repos/Finschia/finschia/tags" | jq -r '.[0].name')
+          if [ ${{ env.CURRENT_TAG }} != $NEW_TAG ] && \
+          [ "$(git branch -r | grep "auto-bump-up/${NEW_TAG}")" == "" ]; then \
+            echo "NEW_TAG=$NEW_TAG" >> $GITHUB_ENV; \
+            git checkout $NEW_TAG
+          fi
+
+      - name: get each submodule version from go.mod in finschia
+        if: env.NEW_TAG
+        id: get_versions
+        run: |
+          FINSCHIA_SDK_VERSION=$(grep 'github.com/Finschia/finschia-sdk' go.mod | awk '{print $2}' | awk -F '-' '{if ($3 != "") {print $3} else  if ($2 != "") {print $1"-"$2} else {print $1}}')
+          WASMD_VERSION=$(grep 'github.com/Finschia/wasmd' go.mod | awk '{print $2}' | awk -F '-' '{if ($3 != "") {print $3} else  if ($2 != "") {print $1"-"$2} else {print $1}}')
+          IBC_GO_VERSION=$(grep 'github.com/cosmos/ibc-go' go.mod | grep -v '=>' | awk '{print $2}' | awk -F '-' '{if ($3 != "") {print $3} else  if ($2 != "") {print $1"-"$2} else {print $1}}')
+          TENDERMINT_VERSION=$(grep 'github.com/tendermint/tendermint' go.mod | grep -v '=>' | awk '{print $2}' | awk -F '-' '{if ($3 != "") {print $3} else  if ($2 != "") {print $1"-"$2} else {print $1}}')
+          echo "NEW_TAG=${NEW_TAG}" >> $GITHUB_OUTPUT
+          echo "FINSCHIA_SDK_VERSION=$FINSCHIA_SDK_VERSION" >> $GITHUB_OUTPUT
+          echo "WASMD_VERSION=$WASMD_VERSION" >> $GITHUB_OUTPUT
+          echo "TENDERMINT_VERSION=$TENDERMINT_VERSION" >> $GITHUB_OUTPUT
+          echo "IBC_GO_VERSION=$IBC_GO_VERSION" >> $GITHUB_OUTPUT
+
+  create-bump-up-PR:
+    runs-on: ubuntu-latest
+    needs: check-new-finschia-tag
+    if: needs.check-new-finschia-tag.outputs.NEW_TAG
+    env:
+      NEW_TAG: ${{ needs.check-new-finschia-tag.outputs.NEW_TAG }}
+      FINSCHIA_SDK_VERSION: ${{ needs.check-new-finschia-tag.outputs.FINSCHIA_SDK_VERSION }}
+      WASMD_VERSION: ${{ needs.check-new-finschia-tag.outputs.WASMD_VERSION }}
+      IBC_GO_VERSION: ${{ needs.check-new-finschia-tag.outputs.IBC_GO_VERSION }}
+      TENDERMINT_VERSION: ${{ needs.check-new-finschia-tag.outputs.TENDERMINT_VERSION }}
+
+    steps:
+      - name: Check out to finschia-wasm
+        uses: actions/checkout@v4
+        with:
+          repository: Finschia/finschia-wasm
+
+      - name: fetch and merge submodule
+        run: |
+          git submodule update --init --remote
+          git submodule status
+
+      - name: rust setup
+        run: rustup component add rustfmt
+
+      - name: buf setup
+        uses: bufbuild/buf-setup-action@v1
+
+      - name: Install protoc
+        uses: arduino/setup-protoc@v1
+        with:
+          version: "3.14.0"
 
       - name: Install buf
         run: |
           GO111MODULE=on go install github.com/bufbuild/buf/cmd/buf@v1.15.1
 
-      - name: Checkout
-        uses: actions/checkout@v3
+      - name: use actions cache
+        uses: ./.github/actions/cache
 
-      - name: Set up cargo cache
-        uses: actions/cache@v3
-        continue-on-error: false
-        with:
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-            target/
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: ${{ runner.os }}-cargo-
-
-      - name: Generate code
+      - name: set each submodule version to env file in finschia-wasm
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          echo '# Choose from https://github.com/Finschia/finschia/releases' > env
+          echo FINSCHIA_VERSION=${{ env.NEW_TAG }} >> env
+          echo FINSCHIA_SDK_VERSION=${{ env.FINSCHIA_SDK_VERSION }} >> env
+          echo WASMD_VERSION=${{ env.WASMD_VERSION }} >> env
+          echo TENDERMINT_VERSION=${{ env.TENDERMINT_VERSION }} >> env
+          echo IBC_GO_VERSION=${{ env.IBC_GO_VERSION }} >> env
 
-          # buf is installed in GOPATH
-          export PATH=${PATH}:`go env GOPATH`/bin
+      - name: Generate new packages/finschia-std
+        run: |
+          cargo run
+        working-directory: packages/proto-build
 
-          ./scripts/update-and-rebuild.sh "$OSMOSIS_REV"
-
-        env:
-          OSMOSIS_REV: ${{ inputs.osmosis_rev }}
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v4
+        with:
+          commit-message: "build: Automated bump up ${{ env.NEW_TAG }}"
+          committer: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
+          author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
+          branch: auto-bump-up/${{ env.NEW_TAG }}
+          labels: automated pr
+          title: bump up finschia ${{ env.NEW_TAG }} into main
+          base: main
