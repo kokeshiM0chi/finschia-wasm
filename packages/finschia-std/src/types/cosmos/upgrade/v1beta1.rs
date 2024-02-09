@@ -61,7 +61,6 @@ pub struct Plan {
     CosmwasmExt,
 )]
 #[proto_message(type_url = "/cosmos.upgrade.v1beta1.SoftwareUpgradeProposal")]
-#[deprecated]
 pub struct SoftwareUpgradeProposal {
     #[prost(string, tag = "1")]
     pub title: ::prost::alloc::string::String,
@@ -84,7 +83,6 @@ pub struct SoftwareUpgradeProposal {
     CosmwasmExt,
 )]
 #[proto_message(type_url = "/cosmos.upgrade.v1beta1.CancelSoftwareUpgradeProposal")]
-#[deprecated]
 pub struct CancelSoftwareUpgradeProposal {
     #[prost(string, tag = "1")]
     pub title: ::prost::alloc::string::String,
