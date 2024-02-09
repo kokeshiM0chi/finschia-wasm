@@ -100,12 +100,12 @@ jobs:
 
       - name: set each submodule version to env file in finschia-wasm
         run: |
-          echo '# Choose from https://github.com/Finschia/finschia/releases' | cat > env
-          echo FINSCHIA_VERSION=${{ env.NEW_TAG }} | cat >> env
-          echo FINSCHIA_SDK_VERSION=${{ env.FINSCHIA_SDK_VERSION }} | cat >> env
-          echo WASMD_VERSION=${{ env.WASMD_VERSION }} | cat >> env
-          echo TENDERMINT_VERSION=${{ env.TENDERMINT_VERSION }} | cat >> env
-          echo IBC_GO_VERSION=${{ env.IBC_GO_VERSION }} | cat >> env
+          echo '# Choose from https://github.com/Finschia/finschia/releases' > env
+          echo FINSCHIA_VERSION=${{ env.NEW_TAG }} >> env
+          echo FINSCHIA_SDK_VERSION=${{ env.FINSCHIA_SDK_VERSION }} >> env
+          echo WASMD_VERSION=${{ env.WASMD_VERSION }} >> env
+          echo TENDERMINT_VERSION=${{ env.TENDERMINT_VERSION }} >> env
+          echo IBC_GO_VERSION=${{ env.IBC_GO_VERSION }} >> env
 
       - name: Generate new packages/finschia-std
         run: |
