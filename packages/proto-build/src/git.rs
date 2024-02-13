@@ -8,7 +8,7 @@ pub fn checkout_submodule(dir: &str, rev: &str) {
     let err_msg = format!("Checkout Error; Path: {}", &full_path_dir);
     cmd_git
         .arg("-C")
-        .arg(&full_path_dir.clone())
+        .arg(&full_path_dir)
         .arg("checkout")
         .arg(rev)
         .status()

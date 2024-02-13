@@ -5,7 +5,6 @@
 
 use std::path::PathBuf;
 
-use dotenvy;
 use proto_build::{
     code_generator::{CodeGenerator, CosmosProject},
     git,
@@ -47,11 +46,11 @@ pub fn generate(version_tags: &HashMap<String, String>) {
 
     // cosmos/ics23 have not supported yet in Finschia. So it is fixed tag as like osmosis.
     let ics23_version = "rust/v0.10.0";
-    git::checkout_submodule(FINSCHIA_SDK_DIR, &finschia_sdk_version);
-    git::checkout_submodule(WASMD_DIR, &wasmd_version);
-    git::checkout_submodule(COMETBFT_DIR, &tendermint_version);
-    git::checkout_submodule(IBC_GO_DIR, &ibc_go_version);
-    git::checkout_submodule(ICS23_DIR, &ics23_version);
+    git::checkout_submodule(FINSCHIA_SDK_DIR, finschia_sdk_version);
+    git::checkout_submodule(WASMD_DIR, wasmd_version);
+    git::checkout_submodule(COMETBFT_DIR, tendermint_version);
+    git::checkout_submodule(IBC_GO_DIR, ibc_go_version);
+    git::checkout_submodule(ICS23_DIR, ics23_version);
 
     let tmp_build_dir: PathBuf = TMP_BUILD_DIR.parse().unwrap();
     let out_dir: PathBuf = OUT_DIR.parse().unwrap();

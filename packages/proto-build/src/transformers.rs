@@ -552,7 +552,7 @@ pub fn append_querier(
         vec![]
     };
 
-    vec![items, querier].concat()
+    [items, querier].concat()
 }
 
 /// This is a hack to fix a clashing name in the stake_authorization module
