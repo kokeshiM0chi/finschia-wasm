@@ -6,7 +6,7 @@ mode="mainnet"
 SCRIPT_DIR="$(realpath "$(dirname "$0")")"
 source "$SCRIPT_DIR"/env
 
-CHAIN_ID="simd-testing"
+CHAIN_ID="finschia"
 MONIKER="simd-testing"
 if [[ -z $1 ]]; then
   echo "CONFIG_DIR does not exists"

@@ -3,11 +3,11 @@
 ## parameters
 CONTRACT_ADDRESS='link14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sgf2vn8'
 FROM_ACCOUNT='link146asaycmtydq45kxc8evntqfgepagygelel00h'
-URL='http://localhost:26658'
-CHAIN_OPTION='--chain-id simd-testing --keyring-backend test -b block -o json -y'
+URL='http://localhost:26657'
+CHAIN_OPTION='--chain-id finschia --keyring-backend test -b block -o json -y'
 
 ## Wait until the height of the block is greater than or equal to 1.
-timeout 60 bash -c 'until [[ $(curl -s "http://localhost:26658/status?" | jq -r ".result.sync_info.latest_block_height // 0") -ge 1 ]]; do sleep 0.5; done'
+timeout 60 bash -c 'until [[ $(curl -s "http://localhost:26657/status?" | jq -r ".result.sync_info.latest_block_height // 0") -ge 1 ]]; do sleep 0.5; done'
 
 # If the timeout fails, the process will be terminated abnormally.
 exitstatus=$?
