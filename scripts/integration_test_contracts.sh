@@ -72,3 +72,5 @@ result=$(fnsad tx wasm execute ${CONTRACT_ADDRESS} '{"burn_nft":{"from":"'${CONT
 ## confirm a result of `burn_nft`
 raw_log=$(echo ${result} | jq .raw_log)
 check_run_info "${raw_log}" "execute; burn_nft"
+echo $raw_log
+echo 999
