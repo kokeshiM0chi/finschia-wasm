@@ -1,0 +1,69 @@
+name: tests-contracts
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+env:
+  TEST_DOCKER_IMAGE: finschia/finschianode
+  GO_VERSION: "1.20"
+
+jobs:
+  tests-contracts:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: Finschia/finschia
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Docker pull
+        run: |
+          docker pull finschia/finschianode:2.0.1
+          docker image ls -a
+      - name: Set configure file
+        run: |
+          export FNSAD="docker run -i --rm -p 26656:26656 -p 26657:26657 -v ${pwd}/.finschia:/root/.finschia ${{ env.TEST_DOCKER_IMAGE }} fnsad"
+          ./init_single.sh
+        shell: bash
+
+      - name: Start docker container
+        id: docker_start
+        run: |
+          container_id=$(docker run -d \
+            -p 26656:26656 -p 26657:26657 \
+            -v ${pwd}/.finschia:/root/.finschia \
+            ${{ env.TEST_DOCKER_IMAGE }} fnsad start)
+          echo "container_id=$container_id" >> "$GITHUB_OUTPUT"
+          sleep 5
+
+      - name: Check out to finschia-wasm
+        uses: actions/checkout@v4
+        with:
+          repository: Finschia/finschia-wasm
+
+      - name: Update cargo.lock
+        run: |
+          cargo build
+        working-directory: examples
+
+      - name: Build contract
+        run: |
+          docker run --rm -v "$(pwd)":/code \
+            --mount type=volume,source="$(basename "$(pwd)")_cache",target=/code/examples/target \
+            --mount type=volume,source=registry_cache,target=/usr/local/cargo/registry \
+            cosmwasm/rust-optimizer:0.12.13 ./examples
+
+      - name: CI test
+        run: |
+          docker exec ${{ steps.docker_start.outputs.container_id }} apk add --no-cache jq bash curl && \
+          docker cp ./scripts/integration_test_contracts.sh ${{ steps.docker_start.outputs.container_id }}:/root/integration_test_contracts.sh
+          docker cp ./artifacts ${{ steps.docker_start.outputs.container_id }}:/root/artifacts
+          docker exec ${{ steps.docker_start.outputs.container_id }} /root/integration_test_contracts.sh
+
+      - name: Stop docker container
+        if: ${{ always() && steps.docker_start.conclusion == 'success' }}
+        run: docker stop ${{ steps.docker_start.outputs.container_id }}
