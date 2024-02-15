@@ -44,7 +44,8 @@ jobs:
       - name: Check out to finschia-wasm
         uses: actions/checkout@v4
         with:
-          repository: Finschia/finschia-wasm
+          repository: kokeshiM0chi/finschia-wasm
+          ref: ci-contracts-integration2-test
 
       - name: Update cargo.lock
         run: |
