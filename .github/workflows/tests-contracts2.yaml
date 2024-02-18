@@ -7,10 +7,6 @@ on:
       - main
   pull_request:
 
-env:
-  TEST_DOCKER_IMAGE: finschia/finschianode
-  GO_VERSION: "1.20"
-
 jobs:
   tests-contracts:
     runs-on: ubuntu-latest
