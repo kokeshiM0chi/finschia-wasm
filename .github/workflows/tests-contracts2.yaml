@@ -1,0 +1,41 @@
+name: tests-contracts2
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
+
+env:
+  TEST_DOCKER_IMAGE: finschia/finschianode
+  GO_VERSION: "1.20"
+
+jobs:
+  tests-contracts:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: docker/setup-buildx-action@v3
+      - name: Check out to finschia-wasm
+        uses: actions/checkout@v4
+        with:
+          repository: kokeshiM0chi/finschia-wasm
+          ref: ci-contracts-integration2-test
+
+      - name: Update cargo.lock
+        run: |
+          cargo build
+        working-directory: examples
+
+      - name: Build contract
+        run: |
+          docker run --rm -v "$(pwd)":/code \
+            --mount type=volume,source="$(basename "$(pwd)")_cache",target=/code/examples/target \
+            --mount type=volume,source=registry_cache,target=/usr/local/cargo/registry \
+            cosmwasm/rust-optimizer:0.12.13 ./examples
+
+      - name: CI test
+        run: |
+          bash -xe ./start_integration_test_contracts_with_docker.sh
+        working-directory: scripts
