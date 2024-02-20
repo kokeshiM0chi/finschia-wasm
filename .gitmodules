@@ -10,3 +10,6 @@
 [submodule "dependencies/finschia-sdk"]
 	path = dependencies/finschia-sdk
 	url = https://github.com/Finschia/finschia-sdk.git
+[submodule "dependencies/ostracon"]
+	path = dependencies/ostracon
+	url = https://github.com/Finschia/ostracon.git
