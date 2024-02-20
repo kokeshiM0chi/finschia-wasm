@@ -10,7 +10,7 @@ use finschia_std_derive::CosmwasmExt;
     ::schemars::JsonSchema,
     CosmwasmExt,
 )]
-#[proto_message(type_url = "/tendermint.rpc.grpc.RequestPing")]
+#[proto_message(type_url = "/ostracon.rpc.grpc.RequestPing")]
 pub struct RequestPing {}
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(
@@ -23,7 +23,7 @@ pub struct RequestPing {}
     ::schemars::JsonSchema,
     CosmwasmExt,
 )]
-#[proto_message(type_url = "/tendermint.rpc.grpc.RequestBroadcastTx")]
+#[proto_message(type_url = "/ostracon.rpc.grpc.RequestBroadcastTx")]
 pub struct RequestBroadcastTx {
     #[prost(bytes = "vec", tag = "1")]
     #[serde(
@@ -43,7 +43,7 @@ pub struct RequestBroadcastTx {
     ::schemars::JsonSchema,
     CosmwasmExt,
 )]
-#[proto_message(type_url = "/tendermint.rpc.grpc.ResponsePing")]
+#[proto_message(type_url = "/ostracon.rpc.grpc.ResponsePing")]
 pub struct ResponsePing {}
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(
@@ -56,10 +56,11 @@ pub struct ResponsePing {}
     ::schemars::JsonSchema,
     CosmwasmExt,
 )]
-#[proto_message(type_url = "/tendermint.rpc.grpc.ResponseBroadcastTx")]
+#[proto_message(type_url = "/ostracon.rpc.grpc.ResponseBroadcastTx")]
 pub struct ResponseBroadcastTx {
     #[prost(message, optional, tag = "1")]
     pub check_tx: ::core::option::Option<super::super::abci::ResponseCheckTx>,
     #[prost(message, optional, tag = "2")]
-    pub deliver_tx: ::core::option::Option<super::super::abci::ResponseDeliverTx>,
+    pub deliver_tx:
+        ::core::option::Option<super::super::super::tendermint::abci::ResponseDeliverTx>,
 }
