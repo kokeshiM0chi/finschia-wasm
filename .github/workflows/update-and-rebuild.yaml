@@ -15,6 +15,7 @@ jobs:
       WASMD_VERSION: ${{ steps.get_versions.outputs.WASMD_VERSION }}
       IBC_GO_VERSION: ${{ steps.get_versions.outputs.IBC_GO_VERSION }}
       OSTRACON_VERSION: ${{ steps.get_versions.outputs.OSTRACON_VERSION }}
+      TENDERMINT_VERSION: ${{ steps.get_versions.outputs.TENDERMINT_VERSION }}
     steps:
       - name: Set current tag to env
         run: |
@@ -44,10 +45,12 @@ jobs:
           WASMD_VERSION=$(grep 'github.com/Finschia/wasmd' go.mod | awk '{print $2}' | awk -F '-' '{if ($3 != "") {print $3} else  if ($2 != "") {print $1"-"$2} else {print $1}}')
           IBC_GO_VERSION=$(grep 'github.com/cosmos/ibc-go' go.mod | grep -v '=>' | awk '{print $2}' | awk -F '-' '{if ($3 != "") {print $3} else  if ($2 != "") {print $1"-"$2} else {print $1}}')
           OSTRACON_VERSION=$(grep 'github.com/Finschia/ostracon' go.mod | grep -v '=>' | awk '{print $2}' | awk -F '-' '{if ($3 != "") {print $3} else  if ($2 != "") {print $1"-"$2} else {print $1}}')
+          TENDERMINT_VERSION=$(grep 'github.com/tendermint/tendermint' go.mod | grep -v '=>' | awk '{print $2}' | awk -F '-' '{if ($3 != "") {print $3} else  if ($2 != "") {print $1"-"$2} else {print $1}}')
           echo "NEW_TAG=${NEW_TAG}" >> $GITHUB_OUTPUT
           echo "FINSCHIA_SDK_VERSION=$FINSCHIA_SDK_VERSION" >> $GITHUB_OUTPUT
           echo "WASMD_VERSION=$WASMD_VERSION" >> $GITHUB_OUTPUT
           echo "OSTRACON_VERSION=$OSTRACON_VERSION" >> $GITHUB_OUTPUT
+          echo "TENDERMINT_VERSION=$TENDERMINT_VERSION" >> $GITHUB_OUTPUT
           echo "IBC_GO_VERSION=$IBC_GO_VERSION" >> $GITHUB_OUTPUT
 
   create-bump-up-PR:
@@ -60,6 +63,7 @@ jobs:
       WASMD_VERSION: ${{ needs.check-new-finschia-tag.outputs.WASMD_VERSION }}
       IBC_GO_VERSION: ${{ needs.check-new-finschia-tag.outputs.IBC_GO_VERSION }}
       OSTRACON_VERSION: ${{ needs.check-new-finschia-tag.outputs.OSTRACON_VERSION }}
+      TENDERMINT_VERSION: ${{ needs.check-new-finschia-tag.outputs.TENDERMINT_VERSION }}
 
     steps:
       - name: Check out to finschia-wasm
@@ -97,6 +101,7 @@ jobs:
           echo FINSCHIA_SDK_VERSION=${{ env.FINSCHIA_SDK_VERSION }} >> env
           echo WASMD_VERSION=${{ env.WASMD_VERSION }} >> env
           echo OSTRACON_VERSION=${{ env.OSTRACON_VERSION }} >> env
+          echo TENDERMINT_VERSION=${{ env.TENDERMINT_VERSION }} >> env
           echo IBC_GO_VERSION=${{ env.IBC_GO_VERSION }} >> env
 
       - name: Generate new packages/finschia-std
