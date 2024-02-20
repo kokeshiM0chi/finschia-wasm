@@ -13,3 +13,6 @@
 [submodule "dependencies/ostracon"]
 	path = dependencies/ostracon
 	url = https://github.com/Finschia/ostracon.git
+[submodule "dependencies/tendermint"]
+	path = dependencies/tendermint
+	url = https://github.com/tendermint/tendermint.git
