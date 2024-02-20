@@ -20,8 +20,10 @@ const OUT_DIR: &str = "../finschia-std/src/types/";
 const FINSCHIA_SDK_DIR: &str = "../../dependencies/finschia-sdk/";
 /// Directory where the wasmd submodule is located
 const WASMD_DIR: &str = "../../dependencies/wasmd/";
-/// Directory where the cometbft submodule is located
+/// Directory where the ostracon submodule is located
 const OSTRACON_DIR: &str = "../../dependencies/ostracon/";
+/// Directory where the ostracon submodule is located
+const TENDERMINT_DIR: &str = "../../dependencies/tendermint/";
 /// Directory where the ibc-go submodule is located
 const IBC_GO_DIR: &str = "../../dependencies/ibc-go/";
 /// Directory where the ics23 submodule is located
@@ -40,6 +42,9 @@ pub fn generate(version_tags: &HashMap<String, String>) {
     let ostracon_version = version_tags
         .get("OSTRACON_VERSION")
         .expect("TENDERMINT_VERSION is not set");
+    let tendermint_version = version_tags
+        .get("TENDERMINT_VERSION")
+        .expect("TENDERMINT_VERSION is not set");
     let ibc_go_version = version_tags
         .get("IBC_GO_VERSION")
         .expect("IBC_GO_VERSION is not set");
@@ -49,6 +54,7 @@ pub fn generate(version_tags: &HashMap<String, String>) {
     git::checkout_submodule(FINSCHIA_SDK_DIR, finschia_sdk_version);
     git::checkout_submodule(WASMD_DIR, wasmd_version);
     git::checkout_submodule(OSTRACON_DIR, ostracon_version);
+    git::checkout_submodule(TENDERMINT_DIR, tendermint_version);
     git::checkout_submodule(IBC_GO_DIR, ibc_go_version);
     git::checkout_submodule(ICS23_DIR, ics23_version);
 
@@ -65,6 +71,13 @@ pub fn generate(version_tags: &HashMap<String, String>) {
         name: "ostracon".to_string(),
         version: ostracon_version.to_string(),
         project_dir: OSTRACON_DIR.to_string(),
+        exclude_mods: vec![],
+    };
+
+    let tendermint_project = CosmosProject {
+        name: "tendermint".to_string(),
+        version: tendermint_version.to_string(),
+        project_dir: TENDERMINT_DIR.to_string(),
         exclude_mods: vec![],
     };
 
@@ -93,7 +106,7 @@ pub fn generate(version_tags: &HashMap<String, String>) {
         out_dir,
         tmp_build_dir,
         cosmos_project,
-        vec![ibc_project, ostracon_project, wasmd_project, ics23_project],
+        vec![ibc_project, ostracon_project, tendermint_project, wasmd_project, ics23_project],
     );
 
     finschia_code_generator.generate();
