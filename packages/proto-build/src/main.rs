@@ -106,7 +106,13 @@ pub fn generate(version_tags: &HashMap<String, String>) {
         out_dir,
         tmp_build_dir,
         cosmos_project,
-        vec![ibc_project, ostracon_project, tendermint_project, wasmd_project, ics23_project],
+        vec![
+            ibc_project,
+            ostracon_project,
+            tendermint_project,
+            wasmd_project,
+            ics23_project,
+        ],
     );
 
     finschia_code_generator.generate();
