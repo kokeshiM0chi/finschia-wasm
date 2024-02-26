@@ -26,5 +26,5 @@ jobs:
 
       - name: CI test
         run: |
-          bash -xe ./start_integration_test_contracts_with_docker.sh
+          bash -xe ./integration_test_contracts_with_docker.sh
         working-directory: scripts

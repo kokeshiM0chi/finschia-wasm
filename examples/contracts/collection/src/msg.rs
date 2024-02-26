@@ -4,7 +4,6 @@ use finschia_std::types::lbm::collection::v1::{Attribute, Coin, MintNftParam};
 
 #[cw_serde]
 pub struct InstantiateMsg {
-    pub owner: String,
     pub name: String,
     pub uri: String,
     pub meta: String,
