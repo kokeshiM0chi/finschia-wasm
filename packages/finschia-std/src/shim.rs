@@ -1,8 +1,10 @@
 use ::serde::{ser, Deserialize, Deserializer, Serialize, Serializer};
+use base64::prelude::*;
 use chrono::{DateTime, NaiveDateTime, Utc};
 use cosmwasm_std::StdResult;
 use serde::de;
 use serde::de::Visitor;
+use serde::ser::SerializeStruct;
 
 use std::fmt;
 use std::str::FromStr;
@@ -198,9 +200,17 @@ macro_rules! expand_as_any {
                     }
                 )*
 
-                Err(serde::ser::Error::custom(
-                    "data did not match any type that supports serialization as `Any`",
-                ))
+                if self.type_url.is_empty() {
+                    return Err(serde::ser::Error::custom(
+                        "type_url is empty",
+                    ));
+                }
+
+                let mut any_type = serializer.serialize_struct("Any", 2)?;
+                any_type.serialize_field("type_url", &self.type_url)?;
+                let encode_value = BASE64_STANDARD.encode(&self.value);
+                any_type.serialize_field("value", &encode_value)?;
+                any_type.end()
             }
         }
 
@@ -260,6 +270,25 @@ macro_rules! expand_as_any {
                                 });
                             }
                         )*
+
+                        // if cannot match type struct, try to find type_url
+                        if let serde_cw_value::Value::Map(m) = &value {
+                            if let (Some(serde_cw_value::Value::String(type_url)), Some(serde_cw_value::Value::String(encode_value))) =
+                                (m.get(&serde_cw_value::Value::String("type_url".to_string())), m.get(&serde_cw_value::Value::String("value".to_string())))
+                            {
+                                match BASE64_STANDARD.decode(encode_value) {
+                                    Ok(decoded_value) => {
+                                        return Ok(Any {
+                                            type_url: type_url.clone(),
+                                            value: decoded_value,
+                                        });
+                                    },
+                                    Err(e) => {
+                                        return Err(serde::de::Error::custom(format!("Failed to decode base64 value: {}", e)));
+                                    },
+                                }
+                            }
+                        }
                     }
                 };
 
@@ -285,6 +314,7 @@ macro_rules! expand_as_any {
 // must order by type that has more information for Any deserialization to
 // work correctly. Since after serialization, it currently loses @type tag.
 // And deserialization works by trying to iteratively match the structure.
+#[cfg(not(test))]
 expand_as_any!(
     // accounts have distincted structure
     crate::types::cosmos::auth::v1beta1::BaseAccount,
@@ -296,6 +326,10 @@ expand_as_any!(
     crate::types::cosmos::crypto::secp256r1::PubKey,
     crate::types::cosmos::crypto::ed25519::PubKey,
 );
+// Test environment and production environment are separated.
+// In test environment, expand_as_any only includs ClearAdminProposal
+#[cfg(test)]
+expand_as_any!(crate::types::cosmwasm::wasm::v1::ClearAdminProposal,);
 
 macro_rules! impl_prost_types_exact_conversion {
     ($t:ident | $($arg:ident),*) => {
@@ -365,7 +399,13 @@ pub fn cosmwasm_to_proto_coins(
 mod tests {
     use cosmwasm_std::Uint128;
 
+    use crate::types::{
+        cosmos::gov::v1beta1::MsgSubmitProposal,
+        cosmwasm::wasm::v1::{ClearAdminProposal, UpdateAdminProposal},
+    };
+
     use super::*;
+    use serde_json;
 
     #[test]
     fn test_coins_conversion() {
@@ -384,5 +424,86 @@ mod tests {
         let cosmwasm_coins = try_proto_to_cosmwasm_coins(proto_coins).unwrap();
 
         assert_eq!(coins, cosmwasm_coins);
+    }
+
+    #[test]
+    fn test_deserialization() {
+        let test_proposal_vec = UpdateAdminProposal {
+            title: "foo".to_string(),
+            description: "bar".to_string(),
+            new_admin: "alice".to_string(),
+            contract: "link14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sgf2vn8".to_string(),
+        }
+        .encode_to_vec();
+        let test_proposal_base64 = BASE64_STANDARD.encode(&test_proposal_vec);
+
+        let meta_data = format!(
+            r#"{{"content":{{"type_url":"/cosmwasm.wasm.v1.UpdateAdminProposal","value":"{}"}},"initial_deposit":[],"proposer":"link14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sgf2vn8"}}"#,
+            test_proposal_base64
+        );
+        let result: MsgSubmitProposal = serde_json::from_str(&meta_data).unwrap();
+        let expected_result = MsgSubmitProposal {
+            content: Some(Any {
+                type_url: "/cosmwasm.wasm.v1.UpdateAdminProposal".to_string(),
+                value: test_proposal_vec,
+            }),
+            initial_deposit: vec![],
+            proposer: "link14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sgf2vn8".to_string(),
+        };
+        assert_eq!(result, expected_result);
+    }
+
+    #[test]
+    fn test_serialization() {
+        let test_proposal_vec = UpdateAdminProposal {
+            title: "foo".to_string(),
+            description: "bar".to_string(),
+            new_admin: "alice".to_string(),
+            contract: "link14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sgf2vn8".to_string(),
+        }
+        .encode_to_vec();
+        let test_proposal_base64 = BASE64_STANDARD.encode(&test_proposal_vec);
+
+        let meta_data = MsgSubmitProposal {
+            content: Some(Any {
+                type_url: "/cosmwasm.wasm.v1.UpdateAdminProposal".to_string(),
+                value: test_proposal_vec,
+            }),
+            initial_deposit: vec![],
+            proposer: "link14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sgf2vn8".to_string(),
+        };
+        let result = serde_json::to_string(&meta_data).unwrap();
+        let expected_result = format!(
+            r#"{{"content":{{"type_url":"/cosmwasm.wasm.v1.UpdateAdminProposal","value":"{}"}},"initial_deposit":[],"proposer":"link14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sgf2vn8"}}"#,
+            test_proposal_base64
+        );
+        assert_eq!(result, expected_result);
+    }
+
+    #[test]
+    fn integration_test_serialization_and_deserialization_with_origin() {
+        let test_proposal_vec = ClearAdminProposal {
+            title: "foo".to_string(),
+            description: "bar".to_string(),
+            contract: "link14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sgf2vn8".to_string(),
+        }
+        .encode_to_vec();
+        let test_proposal_base64 = BASE64_STANDARD.encode(&test_proposal_vec);
+
+        // Any type which is not included in the expand_as_any list
+        let meta_data = format!(
+            r#"{{"content":{{"type_url":"/cosmwasm.wasm.v1.ClearAdminProposal","value":"{}"}}, "initial_deposit": [], "proposer": "link14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sgf2vn8"}}"#,
+            test_proposal_base64
+        );
+        let deserialized_data: MsgSubmitProposal = serde_json::from_str(&meta_data).unwrap();
+        let result = serde_json::to_string(&deserialized_data).unwrap();
+
+        // Any type which is included in the expand_as_any list
+        let macro_data = r#"{"content":{"title":"foo","description":"bar", "contract":"link14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sgf2vn8"}, "initial_deposit": [], "proposer": "link14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sgf2vn8"}"#;
+        let expected_deserialized_data: MsgSubmitProposal =
+            serde_json::from_str(macro_data).unwrap();
+        let expected_result = serde_json::to_string(&expected_deserialized_data).unwrap();
+
+        assert_eq!(result, expected_result);
     }
 }
