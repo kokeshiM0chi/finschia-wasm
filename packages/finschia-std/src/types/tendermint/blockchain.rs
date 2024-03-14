@@ -11,7 +11,7 @@ use finschia_std_derive::CosmwasmExt;
     ::schemars::JsonSchema,
     CosmwasmExt,
 )]
-#[proto_message(type_url = "/tendermint.blocksync.BlockRequest")]
+#[proto_message(type_url = "/tendermint.blockchain.BlockRequest")]
 pub struct BlockRequest {
     #[prost(int64, tag = "1")]
     #[serde(
@@ -32,7 +32,7 @@ pub struct BlockRequest {
     ::schemars::JsonSchema,
     CosmwasmExt,
 )]
-#[proto_message(type_url = "/tendermint.blocksync.NoBlockResponse")]
+#[proto_message(type_url = "/tendermint.blockchain.NoBlockResponse")]
 pub struct NoBlockResponse {
     #[prost(int64, tag = "1")]
     #[serde(
@@ -53,7 +53,7 @@ pub struct NoBlockResponse {
     ::schemars::JsonSchema,
     CosmwasmExt,
 )]
-#[proto_message(type_url = "/tendermint.blocksync.BlockResponse")]
+#[proto_message(type_url = "/tendermint.blockchain.BlockResponse")]
 pub struct BlockResponse {
     #[prost(message, optional, tag = "1")]
     pub block: ::core::option::Option<super::types::Block>,
@@ -70,7 +70,7 @@ pub struct BlockResponse {
     ::schemars::JsonSchema,
     CosmwasmExt,
 )]
-#[proto_message(type_url = "/tendermint.blocksync.StatusRequest")]
+#[proto_message(type_url = "/tendermint.blockchain.StatusRequest")]
 pub struct StatusRequest {}
 /// StatusResponse is a peer response to inform their status.
 #[allow(clippy::derive_partial_eq_without_eq)]
@@ -84,7 +84,7 @@ pub struct StatusRequest {}
     ::schemars::JsonSchema,
     CosmwasmExt,
 )]
-#[proto_message(type_url = "/tendermint.blocksync.StatusResponse")]
+#[proto_message(type_url = "/tendermint.blockchain.StatusResponse")]
 pub struct StatusResponse {
     #[prost(int64, tag = "1")]
     #[serde(
@@ -110,7 +110,7 @@ pub struct StatusResponse {
     ::schemars::JsonSchema,
     CosmwasmExt,
 )]
-#[proto_message(type_url = "/tendermint.blocksync.Message")]
+#[proto_message(type_url = "/tendermint.blockchain.Message")]
 pub struct Message {
     #[prost(oneof = "message::Sum", tags = "1, 2, 3, 4, 5")]
     pub sum: ::core::option::Option<message::Sum>,

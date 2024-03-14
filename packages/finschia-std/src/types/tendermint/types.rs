@@ -157,7 +157,7 @@ pub struct BlockId {
     #[prost(message, optional, tag = "2")]
     pub part_set_header: ::core::option::Option<PartSetHeader>,
 }
-/// Header defines the structure of a block header.
+/// Header defines the structure of a Tendermint block header.
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(
     Clone,
@@ -674,6 +674,16 @@ pub struct BlockParams {
         deserialize_with = "crate::serde::as_str::deserialize"
     )]
     pub max_gas: i64,
+    /// Minimum time increment between consecutive blocks (in milliseconds) If the
+    /// block header timestamp is ahead of the system clock, decrease this value.
+    ///
+    /// Not exposed to the application.
+    #[prost(int64, tag = "3")]
+    #[serde(
+        serialize_with = "crate::serde::as_str::serialize",
+        deserialize_with = "crate::serde::as_str::deserialize"
+    )]
+    pub time_iota_ms: i64,
 }
 /// EvidenceParams determine how we handle evidence of malfeasance.
 #[allow(clippy::derive_partial_eq_without_eq)]
@@ -753,7 +763,7 @@ pub struct VersionParams {
         serialize_with = "crate::serde::as_str::serialize",
         deserialize_with = "crate::serde::as_str::deserialize"
     )]
-    pub app: u64,
+    pub app_version: u64,
 }
 /// HashedParams is a subset of ConsensusParams.
 ///
