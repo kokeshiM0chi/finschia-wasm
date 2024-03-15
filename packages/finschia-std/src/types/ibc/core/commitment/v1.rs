@@ -1,3 +1,4 @@
+use crate::types::cosmos::ics23::v1::CommitmentProof;
 use finschia_std_derive::CosmwasmExt;
 /// MerkleRoot defines a merkle root hash.
 /// In the Cosmos SDK, the AppHash of a block header becomes the root.
@@ -82,5 +83,5 @@ pub struct MerklePath {
 #[proto_message(type_url = "/ibc.core.commitment.v1.MerkleProof")]
 pub struct MerkleProof {
     #[prost(message, repeated, tag = "1")]
-    pub proofs: ::prost::alloc::vec::Vec<super::super::super::super::ics23::CommitmentProof>,
+    pub proofs: ::prost::alloc::vec::Vec<CommitmentProof>,
 }
