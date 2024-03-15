@@ -1,3 +1,4 @@
+use crate::types::cosmos::ics23::v1::ProofSpec;
 use finschia_std_derive::CosmwasmExt;
 /// ClientState from Tendermint tracks the current validator set, latest height,
 /// and a possible frozen height.
@@ -36,9 +37,9 @@ pub struct ClientState {
     #[prost(message, optional, tag = "7")]
     pub latest_height: ::core::option::Option<super::super::super::core::client::v1::Height>,
     /// Proof specifications used in verifying counterparty state
+
     #[prost(message, repeated, tag = "8")]
-    pub proof_specs:
-        ::prost::alloc::vec::Vec<super::super::super::super::cosmos::ics23::v1::ProofSpec>,
+    pub proof_specs: ::prost::alloc::vec::Vec<ProofSpec>,
     /// Path at which next upgraded client will be committed.
     /// Each element corresponds to the key for a single CommitmentProof in the
     /// chained proof. NOTE: ClientState must stored under
@@ -100,8 +101,6 @@ pub struct ConsensusState {
 )]
 #[proto_message(type_url = "/ibc.lightclients.tendermint.v1.Misbehaviour")]
 pub struct Misbehaviour {
-    /// ClientID is deprecated
-    #[deprecated]
     #[prost(string, tag = "1")]
     #[serde(alias = "clientID")]
     pub client_id: ::prost::alloc::string::String,
