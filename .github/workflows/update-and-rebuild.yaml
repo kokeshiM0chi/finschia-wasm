@@ -19,7 +19,7 @@ jobs:
     steps:
       - name: Set current tag to env
         run: |
-          CURRENT_TAG=$(curl  "https://api.github.com/repos/Finschia/finschia-proto/tags" | jq -r '.[0].name')
+          CURRENT_TAG=$(curl https://raw.githubusercontent.com/Finschia/finschia-wasm/main/env | grep FINSCHIA_VERSION | awk -F "=" '{print $2}' )
           echo "CURRENT_TAG=$CURRENT_TAG" >> $GITHUB_ENV
 
       - name: Check out to finschia
