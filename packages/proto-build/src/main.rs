@@ -1,7 +1,5 @@
-//! Build Osmosis proto files. This build script clones the CosmosSDK and Osmosis version
-//! specified in the COSMOS_SDK_REV and OSMOSIS_REV constant respectively and then
-//! uses that to build the required proto files for further compilation.
-//! This is based on the proto-compiler code in github.com/informalsystems/ibc-rs
+//! Build Finschia proto files. This build script checks out the submodules and builds the profo files
+//! according to the Finschia version in the env file.
 
 use std::path::PathBuf;
 
@@ -49,7 +47,7 @@ pub fn generate(version_tags: &HashMap<String, String>) {
         .get("IBC_GO_VERSION")
         .expect("IBC_GO_VERSION is not set");
 
-    // cosmos/ics23 have not supported yet in Finschia. So it is fixed tag as like osmosis.
+    // cosmos/ics23 have not supported yet in Finschia.
     let ics23_version = "rust/v0.10.0";
     git::checkout_submodule(FINSCHIA_SDK_DIR, finschia_sdk_version);
     git::checkout_submodule(WASMD_DIR, wasmd_version);

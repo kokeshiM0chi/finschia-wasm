@@ -4,10 +4,10 @@
       "path": "."
     },
     {
-      "path": "packages/osmosis-std"
+      "path": "packages/finschia-std"
     },
     {
-      "path": "packages/osmosis-std-derive"
+      "path": "packages/finschia-std-derive"
     },
     {
       "path": "packages/proto-build"
