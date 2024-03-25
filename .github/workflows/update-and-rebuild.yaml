@@ -22,12 +22,6 @@ jobs:
           CURRENT_TAG=$(curl https://raw.githubusercontent.com/Finschia/finschia-wasm/main/env | grep FINSCHIA_VERSION | awk -F "=" '{print $2}' )
           echo "CURRENT_TAG=$CURRENT_TAG" >> $GITHUB_ENV
 
-      - name: Check out to finschia
-        uses: actions/checkout@v4
-        with:
-          repository: Finschia/finschia
-          fetch-depth: 0
-
       - name: Check new tag released
         run: |
           NEW_TAG=$(curl "https://api.github.com/repos/Finschia/finschia/tags" | jq -r '.[0].name')
@@ -41,17 +35,20 @@ jobs:
         if: env.NEW_TAG
         id: get_versions
         run: |
-          FINSCHIA_SDK_VERSION=$(grep 'github.com/Finschia/finschia-sdk' go.mod | awk '{print $2}' | awk -F '-' '{if ($3 != "") {print $3} else  if ($2 != "") {print $1"-"$2} else {print $1}}')
-          WASMD_VERSION=$(grep 'github.com/Finschia/wasmd' go.mod | awk '{print $2}' | awk -F '-' '{if ($3 != "") {print $3} else  if ($2 != "") {print $1"-"$2} else {print $1}}')
-          IBC_GO_VERSION=$(grep 'github.com/cosmos/ibc-go' go.mod | grep -v '=>' | awk '{print $2}' | awk -F '-' '{if ($3 != "") {print $3} else  if ($2 != "") {print $1"-"$2} else {print $1}}')
-          OSTRACON_VERSION=$(grep 'github.com/Finschia/ostracon' go.mod | grep -v '=>' | awk '{print $2}' | awk -F '-' '{if ($3 != "") {print $3} else  if ($2 != "") {print $1"-"$2} else {print $1}}')
-          TENDERMINT_VERSION=$(grep 'github.com/tendermint/tendermint' go.mod | grep -v '=>' | awk '{print $2}' | awk -F '-' '{if ($3 != "") {print $3} else  if ($2 != "") {print $1"-"$2} else {print $1}}')
+          file_go_mod=$(mktemp temp_go_mod.XXXXXX)
+          curl -s https://raw.githubusercontent.com/Finschia/finschia/main/go.mod >> ${file_go_mod}
+          FINSCHIA_SDK_VERSION=$(grep 'github.com/Finschia/finschia-sdk' "${file_go_mod}" | awk '{print $2}' | awk -F '-' '{if ($3 != "") {print $3} else  if ($2 != "") {print $1"-"$2} else {print $1}}')
+          WASMD_VERSION=$(grep 'github.com/Finschia/wasmd' "${file_go_mod}" | awk '{print $2}' | awk -F '-' '{if ($3 != "") {print $3} else  if ($2 != "") {print $1"-"$2} else {print $1}}')
+          OSTRACON_VERSION=$(grep 'github.com/Finschia/ostracon' "${file_go_mod}" | awk '{print $2}' | awk -F '-' '{if ($3 != "") {print $3} else  if ($2 != "") {print $1"-"$2} else {print $1}}')
+          TENDERMINT_VERSION=$(grep 'github.com/tendermint/tendermint' "${file_go_mod}" | awk '{print $2}' | awk -F '-' '{if ($3 != "") {print $3} else  if ($2 != "") {print $1"-"$2} else {print $1}}')
+          IBC_GO_VERSION=$(grep -e 'github.com/cosmos/ibc-go' "${file_go_mod}" | grep -v '=>' | awk '{print $2}' | awk -F '-' '{if ($3 != "") {print $3} else  if ($2 != "") {print $1"-"$2} else {print $1}}')
           echo "NEW_TAG=${NEW_TAG}" >> $GITHUB_OUTPUT
           echo "FINSCHIA_SDK_VERSION=$FINSCHIA_SDK_VERSION" >> $GITHUB_OUTPUT
           echo "WASMD_VERSION=$WASMD_VERSION" >> $GITHUB_OUTPUT
           echo "OSTRACON_VERSION=$OSTRACON_VERSION" >> $GITHUB_OUTPUT
           echo "TENDERMINT_VERSION=$TENDERMINT_VERSION" >> $GITHUB_OUTPUT
           echo "IBC_GO_VERSION=$IBC_GO_VERSION" >> $GITHUB_OUTPUT
+          rm $file_go_mod
 
   create-bump-up-PR:
     runs-on: ubuntu-latest
