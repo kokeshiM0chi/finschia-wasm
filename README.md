@@ -1,4 +1,4 @@
-> :information_desk_person: If you want to use latest update from osmosis' main branch, checkout `autobuild-main` branch.
+> :information_desk_person: If you want to use latest update from finschia' main branch, checkout `autobuild-main` branch.
 
 # finschia-std
 
