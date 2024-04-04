@@ -1,5 +1,7 @@
 > :information_desk_person: If you want to use latest update from finschia' main branch, checkout `autobuild-main` branch.
 
+This repository is forked from [osmosis-labs/osmosis-rust](https://github.com/osmosis-labs/osmosis-rust)
+
 # finschia-std
 
 Rust libraries for Finschia. The following table shows every published crates maintained in this repository:
