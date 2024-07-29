@@ -11,3 +11,7 @@ Rust libraries for Finschia. The following table shows every published crates ma
 ---
 
 This repo also contains [`proto-build`](./packages/proto-build) package which is used for autogenrating rust types from proto.
+
+## docs
+
+If you want to know how to operate this repository, please refer to the following [document](https://github.com/Finschia/finschia-wasm/tree/main/docs/description.md).
